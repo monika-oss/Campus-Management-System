@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Smart Campus</title>
+    
+    <!-- CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@antv/g2plot@latest/dist/g2plot.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sidebar-item-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-item-link:hover {
+            transform: translateX(4px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        /* Collapsed Sidebar Styles */
+        #adminSidebar, #studentSidebar, #facultySidebar {
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .collapsed-sidebar {
+            width: 5rem !important; /* w-20 */
+        }
+        .collapsed-sidebar .brand-text,
+        .collapsed-sidebar .nav-text,
+        .collapsed-sidebar .logout-text {
+            display: none !important;
+        }
+        .collapsed-sidebar .sidebar-item-link {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .brand-logo-container {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .sidebar-item-link:hover {
+            transform: none !important;
+        }
+    </style>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css?v=6">
+</head>
+<body class="h-screen flex bg-slate-50 overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-50 shadow-xl fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="adminSidebar">
+            <div>
+                <!-- Brand logo -->
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                    <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                    <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
+                    <button id="closeSidebar" onclick="this.closest('aside').classList.add('-translate-x-full'); this.closest('aside').style.transform = ''; const ov = document.getElementById(this.closest('aside').id + 'Overlay'); if(ov) ov.classList.add('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <!-- Navigation menu -->
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="students.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Students</span>
+                    </a>
+                    <a href="faculty.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Faculty</span>
+                    </a>
+                    
+                    <a href="attendance.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Attendance</span>
+                    </a>
+                    <a href="timetable.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar-days" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Timetable</span>
+                    </a>
+                    <a href="leave.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Leave Requests</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="award" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Results</span>
+                    </a>
+                    <a href="announcements.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="megaphone" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Announcements</span>
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Sidebar Footer / Logout -->
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 bg-slate-850 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        <script>if(window.lucide) lucide.createIcons();</script>
+
+        <!-- Main Wrapper -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+            
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <button id="sidebarToggle" class="p-2 bg-white text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors block lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-base sm:text-xl font-extrabold text-slate-800 font-outfit truncate leading-tight">Dashboard Overview</h2>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-blue-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">A</div>
+                        <span class="font-semibold text-slate-700 text-sm hidden sm:block" id="userName">Admin</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 lg:py-8" id="mainDashboard">
+                <div class="space-y-8 max-w-7xl w-full mx-auto">
+                
+                <!-- KPI Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- KPI Card 1 -->
+                    <div class="kpi-card glass-card p-6 rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-lg hover:scale-[1.03] transition-all duration-300 cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-inner">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Students</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1 font-outfit" id="kpi-students">-</h3>
+                        </div>
+                    </div>
+                    <!-- KPI Card 2 -->
+                    <div class="kpi-card glass-card p-6 rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-lg hover:scale-[1.03] transition-all duration-300 cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-inner font-outfit">
+                            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Faculty</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1 font-outfit" id="kpi-faculty">-</h3>
+                        </div>
+                    </div>
+                    <!-- KPI Card 3 -->
+                    <div class="kpi-card glass-card p-6 rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-lg hover:scale-[1.03] transition-all duration-300 cursor-pointer">
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shadow-inner">
+                            <i data-lucide="calendar" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Attendance</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1 font-outfit" id="kpi-attendance">-</h3>
+                        </div>
+                    </div>
+                    <!-- KPI Card 4 -->
+                    <div class="kpi-card glass-card p-6 rounded-2xl shadow-sm flex items-center gap-5 hover:shadow-lg hover:scale-[1.03] transition-all duration-300 cursor-pointer">
+
+                        <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shadow-inner font-outfit">
+                            <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text.xs font-semibold text-slate-500 uppercase tracking-wider">Pending Leaves</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1 font-outfit" id="kpi-leaves">-</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:p-8">
+                    <div class="glass-card p-6 rounded-2xl shadow-sm content-block">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 font-outfit">Department-wise Students</h3>
+                        <div id="deptChart" class="h-[300px]"></div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl shadow-sm content-block">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 font-outfit">Monthly Attendance Trend</h3>
+                        <div id="attendanceChart" class="h-[300px]"></div>
+                    </div>
+                </div>
+
+                <!-- Tables Row -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:p-8">
+                    <!-- Recent Notifications -->
+                    <div class="glass-card p-6 rounded-2xl shadow-sm xl:col-span-2 content-block">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-slate-800 font-outfit">Recent Notifications</h3>
+                            <a href="announcements.html" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">View All</a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="ant-table" id="notificationsTable">
+                                <thead>
+                                    <tr class="border-b border-slate-100 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                                        <th class="py-3 px-4">Date</th>
+                                        <th class="py-3 px-4">Title</th>
+                                        <th class="py-3 px-4">Target Audience</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100/50 text-sm text-slate-650">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="glass-card p-6 rounded-2xl shadow-sm content-block">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4 font-outfit">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <a href="students.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 hover:shadow-sm border border-slate-100 transition-all group">
+                                <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                </div>
+                                <span class="font-medium text-slate-700">Manage Students</span>
+                            </a>
+                            <a href="faculty.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 hover:shadow-sm border border-slate-100 transition-all group">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-lucide="users" class="w-4 h-4"></i>
+                                </div>
+                                <span class="font-medium text-slate-700">Manage Faculty</span>
+                            </a>
+                            <a href="leaves.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 hover:shadow-sm border border-slate-100 transition-all group">
+                                <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                                </div>
+                                <span class="font-medium text-slate-700">Approve Leaves</span>
+                            </a>
+                            <a href="announcements.html" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 hover:shadow-sm border border-slate-100 transition-all group">
+                                <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                                </div>
+                                <span class="font-medium text-slate-700">Post Announcement</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </main>
+        </div>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/charts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('admin')) {
+                auth.logout();
+                return;
+            }
+            const user = auth.getUser();
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+
+            // Initialize Lucide Icons
+            if(window.lucide) lucide.createIcons();
+
+            // GSAP Dashboard Layout Animations
+            gsap.to("#topNavbar", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.2 });
+            gsap.to(".kpi-card", { duration: 0.6, opacity: 1, y: 0, stagger: 0.1, ease: "power3.out", delay: 0.3 });
+            gsap.to(".content-block", { duration: 0.8, opacity: 1, y: 0, stagger: 0.15, ease: "power3.out", delay: 0.5 });
+
+            // Sidebar Collapsible Toggle
+            const sidebar = document.getElementById('adminSidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    } else {
+                        sidebar.classList.toggle('collapsed-sidebar');
+                    }
+                });
+            const closeBtn = document.getElementById('closeSidebar');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+            }
+
+            // GSAP Bell notification shake effect
+            document.getElementById('bellNotify').addEventListener('mouseenter', () => {
+                gsap.to("#bellNotify span", { duration: 0.1, x: 2, repeat: 5, yoyo: true, ease: "sine.inOut", onComplete: () => gsap.set("#bellNotify span", {x:0}) });
+            });
+
+            // Load Dashboard Data
+            try {
+                const data = await api.get('/analytics/dashboard/');
+                
+                // Update KPIs
+                document.getElementById('kpi-students').textContent = data.total_students;
+                document.getElementById('kpi-faculty').textContent = data.total_faculty;
+                document.getElementById('kpi-attendance').textContent = data.avg_attendance + '%';
+                document.getElementById('kpi-leaves').textContent = data.pending_leaves;
+
+                // Render Charts
+                charts.renderColumnChart('deptChart', data.dept_wise_students, 'code', 'student_count');
+                charts.renderLineChart('attendanceChart', data.monthly_attendance, 'month', 'attendance');
+
+                // Render recent notifications
+                const notifTable = document.getElementById('notificationsTable').querySelector('tbody');
+                try {
+                    const notifData = await api.get('/notifications/');
+                    if (notifData && notifData.length) {
+                        notifTable.innerHTML = notifData.slice(0, 5).map(n => `
+                            <tr class="hover:bg-slate-100/30 transition-colors">
+                                <td class="py-3.5 px-4 font-semibold text-slate-500 whitespace-nowrap">${new Date(n.created_at).toLocaleDateString()}</td>
+                                <td class="py-3.5 px-4 font-medium text-slate-800">${n.title}</td>
+                                <td class="py-3.5 px-4">
+                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200 capitalize">${n.target_audience}</span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        notifTable.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-slate-400">No recent notifications found.</td></tr>';
+                    }
+                } catch (e) {
+                    notifTable.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-red-400">Failed to load notifications.</td></tr>';
+                }
+
+            } catch (error) {
+                console.error("Dashboard data error", error);
+            }
+        });
+    </script>
+    <script src="../js/animations.js"></script>
+</body>
+</html>

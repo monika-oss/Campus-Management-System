@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance - Faculty Portal</title>
+    
+    <!-- CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sidebar-item-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-item-link:hover {
+            transform: translateX(4px);
+        }
+        /* Collapsed Sidebar Styles */
+        #facultySidebar {
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .collapsed-sidebar {
+            width: 5rem !important; /* w-20 */
+        }
+        .collapsed-sidebar .brand-text,
+        .collapsed-sidebar .nav-text,
+        .collapsed-sidebar .logout-text {
+            display: none !important;
+        }
+        .collapsed-sidebar .sidebar-item-link {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .brand-logo-container {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .sidebar-item-link:hover {
+            transform: none !important;
+        }
+        
+        /* Custom Checkbox/Radio */
+        .att-radio input[type="radio"] { display: none; }
+        .att-radio .radio-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 8px; font-weight: 600; font-size: 14px;
+            cursor: pointer; transition: all 0.2s; border: 2px solid transparent;
+        }
+        .att-radio input[value="present"] + .radio-btn { background: #f0fdf4; color: #16a34a; border-color: #dcfce7; }
+        .att-radio input[value="present"]:checked + .radio-btn { background: #16a34a; color: white; border-color: #16a34a; box-shadow: 0 4px 12px rgba(22,163,74,0.3); }
+        
+        .att-radio input[value="absent"] + .radio-btn { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
+        .att-radio input[value="absent"]:checked + .radio-btn { background: #dc2626; color: white; border-color: #dc2626; box-shadow: 0 4px 12px rgba(220,38,38,0.3); }
+        
+        .att-radio input[value="leave"] + .radio-btn { background: #fffbeb; color: #d97706; border-color: #fef3c7; }
+        .att-radio input[value="leave"]:checked + .radio-btn { background: #d97706; color: white; border-color: #d97706; box-shadow: 0 4px 12px rgba(217,119,6,0.3); }
+        
+        .att-radio input[value="onduty"] + .radio-btn { background: #eff6ff; color: #2563eb; border-color: #dbeafe; }
+        .att-radio input[value="onduty"]:checked + .radio-btn { background: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+    </style>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css?v=6">
+</head>
+<body class="h-screen flex bg-slate-50 overflow-hidden">
+
+    <!-- Layout Wrapper -->
+    <div class="flex h-screen w-full relative">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-50 shadow-xl fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="facultySidebar">
+            <div>
+                <!-- Brand logo -->
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                    <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                    <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
+                    <button id="closeSidebar" onclick="this.closest('aside').classList.add('-translate-x-full'); this.closest('aside').style.transform = ''; const ov = document.getElementById(this.closest('aside').id + 'Overlay'); if(ov) ov.classList.add('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <!-- Navigation menu -->
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="attendance.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
+                        <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Mark Attendance</span>
+                    </a>
+                    <a href="leave.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Leave Approvals</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="file-text" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Manage Results</span>
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Sidebar Footer / Logout -->
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 bg-slate-850 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        <script>if(window.lucide) lucide.createIcons();</script>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+            
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <button id="sidebarToggle" class="p-2 bg-white text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors block lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-base sm:text-xl font-extrabold text-slate-800 font-outfit truncate leading-tight">Mark Attendance</h2>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-blue-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="notification-badge absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">F</div>
+                        <span class="font-semibold text-slate-700 text-sm hidden sm:block" id="userName">Faculty</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+            <main class="flex-1 overflow-y-auto relative" id="scrollArea">
+
+            <!-- Page Content -->
+            <div class="p-6 lg:p-8 space-y-6 max-w-5xl w-full mx-auto" id="mainDashboard">
+                
+                <!-- Selection Card -->
+                <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
+                    <form id="attendanceFilterForm" class="flex flex-col md:flex-row gap-4 items-end">
+                        <div class="flex-2 w-full md:w-auto flex-grow">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Class / Subject</label>
+                            <select id="attSubject" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
+                                <option value="">Select a class...</option>
+                                <!-- Loaded via JS -->
+                            </select>
+                        </div>
+                        <div class="w-full md:w-32">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Period</label>
+                            <select id="attPeriod" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Date</label>
+                            <input type="date" id="attDate" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
+                        </div>
+                        <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 transition-all">
+                            Load Students
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Attendance List -->
+                <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden hidden" id="attendanceContainer">
+                    <div class="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center bg-slate-50 gap-4">
+                        <h3 class="text-lg font-bold text-slate-800">Student List</h3>
+                        <div class="flex flex-col sm:flex-row gap-2 items-center">
+                            <input type="text" id="localSearchInput" class="ant-input w-full sm:w-[200px] border border-slate-300 focus:border-blue-500 focus:outline-none transition-all" placeholder="Search by name/roll...">
+                            <div class="flex gap-2">
+                                <button type="button" onclick="markAll('present')" class="px-4 py-1.5 text-sm font-semibold rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors whitespace-nowrap">Mark All Present</button>
+                                <button type="button" onclick="markAll('absent')" class="px-4 py-1.5 text-sm font-semibold rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition-colors whitespace-nowrap">Mark All Absent</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="attendanceSubmitForm">
+                        <div class="divide-y divide-slate-100" id="studentsList">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+                            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 transition-all">Submit Attendance</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if(window.lucide) lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('faculty')) return;
+            
+            const user = auth.getUser();
+            document.getElementById('userName').textContent = user.name || 'Faculty';
+            document.getElementById('userAvatar').textContent = (user.name || 'F')[0].toUpperCase();
+            document.getElementById('attDate').valueAsDate = new Date();
+
+            // Sidebar Collapsible Toggle
+            const sidebar = document.getElementById('facultySidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    } else {
+                        sidebar.classList.toggle('collapsed-sidebar');
+                    }
+                });
+            const closeBtn = document.getElementById('closeSidebar');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+            }
+            
+            let currentStudents = [];
+            
+            // Load Today's classes for dropdown
+            try {
+                if (user.faculty_id) {
+                    const classes = await api.get(`/faculty/${user.faculty_id}/today_classes/`);
+                    const select = document.getElementById('attSubject');
+                    if (classes.length === 0) {
+                        select.innerHTML = '<option value="">No classes today</option>';
+                    } else {
+                        classes.forEach(c => {
+                            const name = c.subject_details ? c.subject_details.subject_name : 'Sub '+c.subject;
+                            select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section}">Period ${c.period_number} - ${name} (${c.year} Yr, Sec ${c.section})</option>`;
+                        });
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+            }
+            
+            document.getElementById('attendanceFilterForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const subjSelect = document.getElementById('attSubject');
+                if(!subjSelect.value) return utils.showToast('Select a class', 'error');
+                
+                const opt = subjSelect.options[subjSelect.selectedIndex];
+                const dept = opt.dataset.dept;
+                const year = opt.dataset.year;
+                const sec = opt.dataset.sec;
+                
+                try {
+                    const students = await api.get(`/faculty/${user.faculty_id}/students/`);
+                    
+                    const list = document.getElementById('studentsList');
+                    currentStudents = students;
+                    
+                    window.renderStudentsList = function(studentsToRender) {
+                        list.innerHTML = '';
+                        if (studentsToRender.length === 0) {
+                            list.innerHTML = '<p class="text-center py-8 text-slate-400">No students found.</p>';
+                        } else {
+                            studentsToRender.forEach(s => {
+                                // Preserve existing radio states if they exist
+                                const existingP = document.querySelector(`input[name="att_${s.id}"][value="present"]`)?.checked;
+                                const existingA = document.querySelector(`input[name="att_${s.id}"][value="absent"]`)?.checked;
+                                const existingL = document.querySelector(`input[name="att_${s.id}"][value="leave"]`)?.checked;
+                                const existingOD = document.querySelector(`input[name="att_${s.id}"][value="onduty"]`)?.checked;
+                                
+                                const pChecked = existingP ? 'checked' : (!existingA && !existingL && !existingOD ? 'checked' : '');
+                                const aChecked = existingA ? 'checked' : '';
+                                const lChecked = existingL ? 'checked' : '';
+                                const odChecked = existingOD ? 'checked' : '';
+
+                                list.innerHTML += `
+                                    <div class="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors student-row" data-name="${s.name.toLowerCase()}" data-roll="${s.roll_number.toLowerCase()}">
+                                        <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+                                                ${s.name.substring(0,2).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-slate-800">${s.name}</h4>
+                                                <p class="text-xs text-slate-500">${s.roll_number}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <label class="att-radio">
+                                                <input type="radio" name="att_${s.id}" value="present" ${pChecked}>
+                                                <div class="radio-btn">P</div>
+                                            </label>
+                                            <label class="att-radio">
+                                                <input type="radio" name="att_${s.id}" value="absent" ${aChecked}>
+                                                <div class="radio-btn">A</div>
+                                            </label>
+                                            <label class="att-radio">
+                                                <input type="radio" name="att_${s.id}" value="leave" ${lChecked}>
+                                                <div class="radio-btn">L</div>
+                                            </label>
+                                            <label class="att-radio">
+                                                <input type="radio" name="att_${s.id}" value="onduty" ${odChecked}>
+                                                <div class="radio-btn">OD</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        }
+                    };
+
+                    renderStudentsList(currentStudents);
+                    
+                    document.getElementById('attendanceContainer').classList.remove('hidden');
+                } catch(err) {
+                    console.error(err);
+                    utils.showToast('Error loading students', 'error');
+                }
+            });
+            
+            document.getElementById('attendanceSubmitForm').addEventListener('submit', async(e) => {
+                e.preventDefault();
+                const subject_id = document.getElementById('attSubject').value;
+                const period_number = document.getElementById('attPeriod').value;
+                const date = document.getElementById('attDate').value;
+                
+                const attendances = [];
+                currentStudents.forEach(s => {
+                    const status = document.querySelector(`input[name="att_${s.id}"]:checked`).value;
+                    attendances.push({ student_id: s.id, status: status });
+                });
+                
+                try {
+                    await api.post('/attendance/mark/', {
+                        subject_id, date, period_number, attendances
+                    });
+                    utils.showToast('Attendance marked successfully!', 'success');
+                    document.getElementById('attendanceContainer').classList.add('hidden');
+                } catch(err) {
+                    console.error(err);
+                    utils.showToast('Error marking attendance', 'error');
+                }
+            });
+        });
+        
+        window.markAll = function(status) {
+            document.querySelectorAll(`.student-row:not(.hidden) input[value="${status}"]`).forEach(input => {
+                input.checked = true;
+            });
+        };
+
+        const localSearchInput = document.getElementById('localSearchInput');
+        if (localSearchInput) {
+            localSearchInput.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase();
+                document.querySelectorAll('.student-row').forEach(row => {
+                    const name = row.dataset.name;
+                    const roll = row.dataset.roll;
+                    if (name.includes(val) || roll.includes(val)) {
+                        row.classList.remove('hidden');
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+            });
+        }
+    </script>
+    <script src="../js/animations.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+

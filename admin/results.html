@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Smart Campus</title>
+    
+    <!-- CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.24.15/antd.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sidebar-item-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-item-link:hover {
+            transform: translateX(4px);
+        }
+        /* Collapsed Sidebar Styles */
+        #adminSidebar, #studentSidebar, #facultySidebar {
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .collapsed-sidebar {
+            width: 5rem !important; /* w-20 */
+        }
+        .collapsed-sidebar .brand-text,
+        .collapsed-sidebar .nav-text,
+        .collapsed-sidebar .logout-text {
+            display: none !important;
+        }
+        .collapsed-sidebar .sidebar-item-link {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .brand-logo-container {
+            justify-content: center;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .collapsed-sidebar .sidebar-item-link:hover {
+            transform: none !important;
+        }
+    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css?v=6">
+</head>
+<body class="h-screen flex bg-slate-50 overflow-hidden">
+
+    <!-- Layout Wrapper -->
+    <div class="flex h-screen w-full relative">
+        
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-50 shadow-xl fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="adminSidebar">
+            <div>
+                <!-- Brand logo -->
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                    <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                    <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
+                    <button id="closeSidebar" onclick="this.closest('aside').classList.add('-translate-x-full'); this.closest('aside').style.transform = ''; const ov = document.getElementById(this.closest('aside').id + 'Overlay'); if(ov) ov.classList.add('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <!-- Navigation menu -->
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="students.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="users" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Students</span>
+                    </a>
+                    <a href="faculty.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Faculty</span>
+                    </a>
+                    
+                    <a href="attendance.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Attendance</span>
+                    </a>
+                    <a href="timetable.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar-days" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Timetable</span>
+                    </a>
+                    <a href="leave.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Leave Requests</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
+                        <i data-lucide="award" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Results</span>
+                    </a>
+                    <a href="announcements.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="megaphone" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Announcements</span>
+                    </a>
+
+                </nav>
+            </div>
+            
+            <!-- Sidebar Footer / Logout -->
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 bg-slate-850 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        <script>if(window.lucide) lucide.createIcons();</script>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+            
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <button id="sidebarToggle" class="p-2 bg-white text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors block lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-base sm:text-xl font-extrabold text-slate-800 font-outfit truncate leading-tight">Results Management</h2>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-blue-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">U</div>
+                        <span class="font-semibold text-slate-700 text-sm hidden sm:block" id="userName">User</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+            <main class="flex-1 overflow-y-auto relative" id="scrollArea">
+
+            <!-- Page Content -->
+            <div class="p-6 lg:p-8 space-y-6 max-w-7xl w-full mx-auto" id="mainDashboard">
+                
+                <!-- Bulk Publish Card -->
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 font-poppins flex items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4 text-blue-500"></i> Bulk Publish Results
+                    </h3>
+                    <form id="bulkPublishForm" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Subject</label>
+                            <select id="bulkSubject" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50" required>
+                                <option value="">Select Subject...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Semester</label>
+                            <select id="bulkSemester" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+                                <option value="">All Semesters</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-all shadow-md shadow-blue-500/20 flex items-center justify-center gap-2">
+                                <i data-lucide="check-check" class="w-4 h-4"></i> Publish Results
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6 font-poppins">Student Academic Grades</h3>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto">
+                        <table class="ant-table" id="resultsTable">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                                    <th class="py-3 px-4">Student</th>
+                                    <th class="py-3 px-4">Subject</th>
+                                    <th class="py-3 px-4">Semester</th>
+                                    <th class="py-3 px-4">Marks</th>
+                                    <th class="py-3 px-4">Published</th>
+                                    <th class="py-3 px-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination Container -->
+                    <div id="resultsPagination" class="flex justify-end items-center gap-2 mt-4"></div>
+                </div>
+            </div>
+        </main>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if(window.lucide) lucide.createIcons();
+        let resultsCurrentPage = 1;
+        const ITEMS_PER_PAGE = 6;
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('admin')) return;
+
+            // Sidebar Collapsible Toggle
+            const sidebar = document.getElementById('adminSidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    } else {
+                        sidebar.classList.toggle('collapsed-sidebar');
+                    }
+                });
+            const closeBtn = document.getElementById('closeSidebar');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+            }
+
+            // Populate bulk subjects dropdown
+            try {
+                const subjects = await api.get('/students/subjects/');
+                const bulkSubjectSelect = document.getElementById('bulkSubject');
+                if (subjects && subjects.length) {
+                    subjects.forEach(sub => {
+                        bulkSubjectSelect.innerHTML += `<option value="${sub.subject_id}">${sub.subject_name}</option>`;
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load subjects:', e);
+            }
+
+            // Fetch and render results
+            async function loadResults() {
+                try {
+                    const data = await api.get('/results/');
+                    window.resultsData = data;
+                    resultsCurrentPage = 1;
+                    renderResultsTable();
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            function renderResultsTable() {
+                const tbody = document.querySelector('#resultsTable tbody');
+                const data = window.resultsData || [];
+                
+                if (data.length) {
+                    const paginated = utils.paginateData(data, resultsCurrentPage, ITEMS_PER_PAGE);
+                    tbody.innerHTML = paginated.map(r => {
+                        const resultId = r.result_id || r.id;
+                        const isPub = r.is_published;
+                        return `
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-slate-800">${r.student_details?.name}</td>
+                                <td class="py-3.5 px-4 font-medium">${r.subject_details?.subject_name}</td>
+                                <td class="py-3.5 px-4">${r.semester} Semester</td>
+                                <td class="py-3.5 px-4 font-bold text-slate-800">${r.marks_obtained} <span class="text-xs text-slate-400 font-normal">/ ${r.max_marks}</span></td>
+                                <td class="py-3.5 px-4">
+                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${isPub ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${isPub ? 'Yes' : 'No'}</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <button onclick="togglePublish(${resultId}, ${isPub})" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${isPub ? 'border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100' : 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'}">
+                                        ${isPub ? 'Unpublish' : 'Publish'}
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                    
+                    utils.renderPagination('resultsPagination', data.length, ITEMS_PER_PAGE, resultsCurrentPage, (newPage) => {
+                        resultsCurrentPage = newPage;
+                        renderResultsTable();
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-400">No results records found.</td></tr>';
+                    document.getElementById('resultsPagination').innerHTML = '';
+                }
+            }
+
+            // Single publish/unpublish toggle function
+            window.togglePublish = async function(id, currentStatus) {
+                try {
+                    const newStatus = !currentStatus;
+                    await api.patch(`/results/${id}/`, { is_published: newStatus });
+                    utils.showToast(newStatus ? 'Result published successfully!' : 'Result unpublished successfully!', 'success');
+                    await loadResults();
+                } catch (e) {
+                    console.error(e);
+                    utils.showToast('Failed to update result status', 'error');
+                }
+            };
+
+            // Bulk publish submit handler
+            document.getElementById('bulkPublishForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const subjectId = document.getElementById('bulkSubject').value;
+                const semester = document.getElementById('bulkSemester').value;
+                
+                const btn = e.target.querySelector('button[type="submit"]');
+                const origText = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Publishing...';
+                btn.disabled = true;
+                if(window.lucide) lucide.createIcons();
+
+                try {
+                    await api.post('/results/publish/', {
+                        subject_id: subjectId,
+                        semester: semester || null
+                    });
+                    utils.showToast('Selected results published successfully!', 'success');
+                    await loadResults();
+                } catch (e) {
+                    console.error(e);
+                    utils.showToast('Failed to bulk publish results', 'error');
+                } finally {
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                    if(window.lucide) lucide.createIcons();
+                }
+            });
+
+            await loadResults();
+        });
+    </script>
+    <script src="../js/animations.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+

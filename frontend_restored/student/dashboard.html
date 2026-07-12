@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Smart Campus</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], outfit: ['Outfit', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .sidebar-item-link { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-item-link:hover { transform: translateX(4px); }
+        #studentSidebar { transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .collapsed-sidebar { width: 5rem !important; }
+        .collapsed-sidebar .brand-text,
+        .collapsed-sidebar .nav-text,
+        .collapsed-sidebar .logout-text { display: none !important; }
+        .collapsed-sidebar .sidebar-item-link { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
+        .collapsed-sidebar .brand-logo-container { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
+        .collapsed-sidebar .sidebar-item-link:hover { transform: none !important; }
+        .stat-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .att-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
+        .att-fill { height: 100%; border-radius: 999px; transition: width 0.8s ease; }
+    </style>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css?v=6">
+</head>
+<body class="min-h-screen flex bg-slate-50 overflow-hidden">
+
+    <div class="flex w-full min-h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <div id="studentSidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-[90] hidden lg:hidden"></div>
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-[100] fixed inset-y-0 left-0 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-xl" id="studentSidebar">
+            <div>
+                <div class="h-20 flex items-center justify-between px-4 border-b border-slate-800 brand-logo-container w-full">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                        <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text whitespace-nowrap">Smart Campus</span>
+                    </div>
+                    <button class="close-sidebar-btn shrink-0 lg:hidden text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-slate-800 focus:outline-none">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link nav-item">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="leaves.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link nav-item">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">My Leaves</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link nav-item">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Academic Grades</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        <script>if(window.lucide) lucide.createIcons();</script>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4">
+                    <button id="sidebarToggle" class="p-2 bg-white text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors block lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-slate-800 font-outfit truncate max-w-[150px] sm:max-w-none">Student Dashboard</h2>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-indigo-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="notification-badge absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">S</div>
+                        <span class="hidden sm:block font-semibold text-slate-700 text-sm" id="userName">Student</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 lg:py-8" id="mainDashboard">
+                <div class="space-y-6 max-w-7xl w-full mx-auto">
+
+                    <!-- Welcome Banner -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+                        <h3 class="text-2xl font-bold font-outfit" id="welcomeMsg">Welcome back!</h3>
+                        <p class="text-indigo-100 mt-1 text-sm">Track your attendance and manage your leaves here.</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                                    <i data-lucide="percent" class="w-4 h-4 text-blue-600"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-500 leading-tight">Overall<br>Attendance</p>
+                            </div>
+                            <p class="text-2xl font-bold text-slate-800" id="kpi-attendance">—</p>
+                        </div>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>Present</p>
+                            </div>
+                            <p class="text-2xl font-bold text-slate-800" id="kpi-present">—</p>
+                        </div>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">
+                                    <i data-lucide="x-circle" class="w-4 h-4 text-rose-600"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>Absent</p>
+                            </div>
+                            <p class="text-2xl font-bold text-slate-800" id="kpi-absent">—</p>
+                        </div>
+                        <div class="stat-card bg-white rounded-xl border border-amber-200 bg-amber-50/20 shadow-sm p-5 flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                                    <i data-lucide="calendar-off" class="w-4 h-4 text-amber-600"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>on Leave</p>
+                            </div>
+                            <p class="text-2xl font-bold text-slate-800" id="kpi-leave">—</p>
+                        </div>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                                    <i data-lucide="clipboard-list" class="w-4 h-4 text-slate-600"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-500 leading-tight">Pending<br>Leaves</p>
+                            </div>
+                            <p class="text-2xl font-bold text-slate-800" id="kpi-leaves">—</p>
+                        </div>
+                    </div>
+
+                    <!-- Attendance by Subject -->
+                    <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                            <h3 class="text-base font-bold text-slate-800">Attendance by Subject</h3>
+                            <a href="leaves.html" class="text-sm text-blue-600 hover:underline font-medium flex items-center gap-1">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Apply Leave
+                            </a>
+                        </div>
+                        <div id="subjectAttendance" class="divide-y divide-slate-50 p-2">
+                            <p class="text-center py-8 text-slate-400 text-sm">Loading attendance...</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if(window.lucide) lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('student')) return;
+
+            const user = auth.getUser();
+            document.getElementById('userName').textContent = user.name || 'Student';
+            document.getElementById('userAvatar').textContent = (user.name || 'S')[0].toUpperCase();
+            document.getElementById('welcomeMsg').textContent = `Welcome back, ${user.name || 'Student'}!`;
+
+            // Sidebar Toggle
+            const sidebar = document.getElementById('studentSidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed-sidebar'));
+            }
+
+            // Load student data
+            try {
+                if (user.student_id) {
+                    const data = await api.get(`/students/${user.student_id}/attendance_summary/`);
+                    
+                    document.getElementById('kpi-attendance').textContent = (data.overall_percentage || 0).toFixed(1) + '%';
+                    document.getElementById('kpi-present').textContent = data.total_present || 0;
+                    document.getElementById('kpi-absent').textContent = data.total_absent || 0;
+                    document.getElementById('kpi-leave').textContent = data.total_leave || 0;
+
+                    const container = document.getElementById('subjectAttendance');
+                    if (data.subjects && data.subjects.length > 0) {
+                        container.innerHTML = data.subjects.map(s => {
+                            const pct = s.percentage || 0;
+                            const color = pct >= 75 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+                            return `
+                                <div class="px-4 py-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-semibold text-slate-700">${s.subject_name || s.subject}</span>
+                                        <span class="text-sm font-bold" style="color: ${color}">${pct.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="att-bar">
+                                        <div class="att-fill" style="width: ${pct}%; background: ${color}"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">${s.present || 0} / ${s.total || 0} classes</p>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        container.innerHTML = '<p class="text-center py-8 text-slate-400 text-sm">No attendance data available yet.</p>';
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+                document.getElementById('subjectAttendance').innerHTML = '<p class="text-center py-8 text-slate-400 text-sm">Could not load attendance data.</p>';
+                document.getElementById('kpi-attendance').textContent = 'N/A';
+                document.getElementById('kpi-present').textContent = '—';
+            }
+
+            // Load leaves
+            try {
+                const leaves = await api.get('/leave/my/');
+                document.getElementById('kpi-leaves').textContent = leaves.filter(l => l.status === 'pending').length;
+            } catch(e) {
+                document.getElementById('kpi-leaves').textContent = '0';
+            }
+        });
+    </script>
+    <script src="../js/animations.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Results Management | CampusConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="bg-slate-50 font-poppins text-slate-800 antialiased overflow-hidden selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- App Container -->
+    <div class="flex h-screen w-full relative">
+        <!-- Sidebar Overlay -->
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden hidden" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-50 shadow-xl fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="facultySidebar">
+            <div>
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                    <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                    <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
+                    <button id="closeSidebar" onclick="this.closest('aside').classList.add('-translate-x-full'); this.closest('aside').style.transform = ''; const ov = document.getElementById(this.closest('aside').id + 'Overlay'); if(ov) ov.classList.add('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="attendance.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Mark Attendance</span>
+                    </a>
+                    <a href="leave.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Leave Approvals</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
+                        <i data-lucide="file-text" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Manage Results</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 bg-slate-850 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+            
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <button id="sidebarToggle" class="p-2.5 bg-slate-50 text-slate-600 rounded-xl shadow-sm border border-slate-200 hover:bg-slate-100 hover:text-blue-600 transition-colors block lg:hidden focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                    <div class="min-w-0 flex-1">
+                        <h2 class="text-lg sm:text-2xl font-extrabold text-slate-800 font-outfit truncate leading-tight tracking-tight">Results Management</h2>
+                        <p class="text-slate-500 mt-0.5 text-xs sm:text-sm truncate hidden sm:block font-medium">Enter and update student marks</p>
+                    </div>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-blue-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="notification-badge absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">F</div>
+                        <span class="font-semibold text-slate-700 text-sm hidden sm:block faculty-name" id="userName">Faculty</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto relative bg-slate-50/50" id="scrollArea">
+                <!-- Page Content -->
+                <div class="p-6 lg:p-8 space-y-6 max-w-6xl w-full mx-auto content-block" id="mainDashboard">
+                    
+                    <!-- Selection Card -->
+                    <div class="glass-card rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                        <div class="p-6 lg:p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 font-outfit">Select Subject & Class</h3>
+                                    <p class="text-sm text-slate-500 mt-1">Choose the criteria to load the student list</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center hidden sm:flex">
+                                    <i data-lucide="filter" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                            </div>
+                            
+                            <form id="filterForm" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Subject</label>
+                                    <div class="relative">
+                                        <select id="selSubject" class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-700 font-medium appearance-none shadow-sm" required>
+                                            <option value="">Select Subject...</option>
+                                        </select>
+                                        <i data-lucide="book-open" class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none"></i>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Semester</label>
+                                    <div class="relative">
+                                        <select id="selSemester" class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-700 font-medium appearance-none shadow-sm" required>
+                                            <option value="">Select subject first...</option>
+                                        </select>
+                                        <i data-lucide="calendar-days" class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none"></i>
+                                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-xl hover:bg-blue-700 transition-all duration-200 font-semibold shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
+                                        <i data-lucide="users" class="w-5 h-5"></i> Load Students
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div id="dataContainer" class="glass-card rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hidden">
+                        <div class="p-6 lg:px-8 lg:py-6 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+                                    <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 font-outfit" id="cardTitle">Enter Marks</h3>
+                                    <p class="text-sm text-slate-500">Update student results below</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 w-full md:w-auto">
+                                <div class="relative w-full md:w-64">
+                                    <input type="text" id="localSearchInput" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-sm shadow-sm placeholder:text-slate-400" placeholder="Search by name or roll...">
+                                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <form id="submitForm">
+                            <div class="overflow-x-auto p-4 lg:p-6">
+                                <table class="ant-table w-full">
+                                    <thead>
+                                        <tr class="border-b-2 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider text-left bg-slate-50/50">
+                                            <th class="py-4 px-6 rounded-tl-xl  ">Roll No</th>
+                                            <th class="py-4 px-6  ">Student Name</th>
+                                            <th class="py-4 px-6  ">Marks Obtained</th>
+                                            <th class="py-4 px-6 rounded-tr-xl  ">Max Marks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentsList" class="divide-y divide-slate-100 text-sm">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="p-6 bg-slate-50/80 border-t border-slate-100 flex justify-end" id="submitBtnContainer">
+                                <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl hover:bg-indigo-700 transition-all duration-200 font-semibold shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
+                                    <i data-lucide="save" class="w-5 h-5"></i> Save Results
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="../js/api.js?v=5"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js?v=5"></script>
+    <script>
+        if(window.lucide) lucide.createIcons();
+        
+        let currentStudents = [];
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('faculty')) return;
+            const user = auth.getUser();
+            document.querySelectorAll('.faculty-name').forEach(el => el.textContent = user.name || 'Faculty');
+            document.getElementById('userAvatar').textContent = (user.name || 'F')[0].toUpperCase();
+
+            // Setup Sidebar Toggle
+            const sidebar = document.getElementById('facultySidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                if(overlay) overlay.classList.toggle('hidden');
+            }
+
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        toggleSidebar();
+                    } else {
+                        sidebar.classList.toggle('collapsed-sidebar');
+                    }
+                });
+            }
+            const closeBtn = document.getElementById('closeSidebar');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    if(overlay) overlay.classList.add('hidden');
+                });
+            }
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                });
+            }
+
+            // GSAP Animations
+            if (window.gsap) {
+                gsap.to("#topNavbar", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.2 });
+                gsap.to(".content-block", { duration: 0.8, opacity: 1, y: 0, ease: "power3.out", delay: 0.3 });
+            }
+
+            // Fetch Assigned Timetable Classes for Faculty
+            if (user.faculty_id) {
+                try {
+                    const classes = await api.get(`/students/timetable/?faculty=${user.faculty_id}`);
+                    const select = document.getElementById('selSubject');
+                    if (classes && classes.length > 0) {
+                        select.innerHTML = '<option value="">Select Subject...</option>';
+                        const seen = new Set();
+                        classes.forEach(c => {
+                            const name = c.subject_details ? c.subject_details.subject_name : 'Subject ' + c.subject;
+                            const deptCode = c.subject_details && c.subject_details.department_details ? c.subject_details.department_details.code : 'Dept';
+                            
+                            // Unique key for option uniqueness (Subject + Department + Year + Section)
+                            const key = `${c.subject}-${c.department}-${c.year}-${c.section}`;
+                            if (!seen.has(key)) {
+                                seen.add(key);
+                                select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section || ''}">
+                                    ${name} (${deptCode}, Year ${c.year}${c.section ? ', Sec ' + c.section : ''})
+                                </option>`;
+                            }
+                        });
+                    } else {
+                        select.innerHTML = '<option value="">No assigned classes found</option>';
+                    }
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+            
+            // Dynamically update semester choices based on selected subject's year
+            const selSubject = document.getElementById('selSubject');
+            const selSemester = document.getElementById('selSemester');
+            selSubject.addEventListener('change', () => {
+                const opt = selSubject.options[selSubject.selectedIndex];
+                if (!opt || !opt.value) {
+                    selSemester.innerHTML = '<option value="">Select subject first...</option>';
+                    return;
+                }
+                const year = parseInt(opt.dataset.year) || 1;
+                const semA = 2 * year - 1;
+                const semB = 2 * year;
+                selSemester.innerHTML = `
+                    <option value="${semA}">Semester ${semA}</option>
+                    <option value="${semB}">Semester ${semB}</option>
+                `;
+            });
+
+            document.getElementById('filterForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const subjSelect = document.getElementById('selSubject');
+                if(!subjSelect.value) return utils.showToast('Select a subject', 'error');
+                
+                const opt = subjSelect.options[subjSelect.selectedIndex];
+                const dept = opt.dataset.dept;
+                const year = opt.dataset.year;
+                const sec = opt.dataset.sec;
+                
+                const subjectId = subjSelect.value;
+                const semester = document.getElementById('selSemester').value;
+                
+                try {
+                    let url = `/students/?department=${dept}&year=${year}`;
+                    if (sec && sec !== 'null' && sec !== 'None') url += `&section=${sec}`;
+                    const students = await api.get(url);
+                    
+                    const existingResults = await api.get(`/results/?subject=${subjectId}&semester=${semester}`);
+                    const resultMap = {};
+                    if(existingResults && existingResults.length) {
+                        existingResults.forEach(r => {
+                            resultMap[r.student] = r;
+                        });
+                    }
+                    
+                    const list = document.getElementById('studentsList');
+                    currentStudents = students;
+                    
+                    document.getElementById('dataContainer').classList.remove('hidden');
+                    
+                    window.renderStudentsList = function(studentsToRender) {
+                        list.innerHTML = '';
+                        if (studentsToRender.length === 0) {
+                            list.innerHTML = '<tr><td colspan="4" class="text-center py-12 text-slate-500 bg-slate-50/50 rounded-xl"><div class="flex flex-col items-center justify-center"><i data-lucide="users" class="w-12 h-12 text-slate-300 mb-3"></i><span class="font-medium">No students found for this class.</span></div></td></tr>';
+                            document.getElementById('submitBtnContainer').style.display = 'none';
+                        } else {
+                            let hasUngradedStudents = false;
+                            studentsToRender.forEach((s, index) => {
+                                let studentId = s.student_id || s.id;
+                                let existing = resultMap[studentId];
+                                if (!existing) {
+                                    hasUngradedStudents = true;
+                                }
+                                
+                                const markVal = existing ? existing.marks_obtained : '';
+                                const maxVal = existing ? existing.max_marks : '100';
+
+                                const marksInputClass = existing ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700';
+                                const maxInputClass = existing ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-50 text-slate-600';
+
+                                let marksInput = `<input type="number" name="marks_${studentId}" ${existing ? 'disabled' : ''} class="w-24 px-3 py-2 ${marksInputClass} border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium shadow-sm" required min="0" placeholder="0" value="${markVal}">`;
+                                let maxInput = `<input type="number" name="max_${studentId}" ${existing ? 'disabled' : ''} class="w-24 px-3 py-2 ${maxInputClass} border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium shadow-sm" required min="1" value="${maxVal}">`;
+                                
+                                list.innerHTML += `
+                                    <tr class="student-row hover:bg-indigo-50/30 transition-colors group" data-name="${s.name.toLowerCase()}" data-roll="${(s.roll_number || '').toLowerCase()}">
+                                        <td class="py-4 px-6 font-semibold text-slate-700 font-outfit">${s.roll_number || '-'}</td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                                                    ${s.name.substring(0,2).toUpperCase()}
+                                                </div>
+                                                <span class="font-semibold text-slate-800">${s.name}</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6">${marksInput}</td>
+                                        <td class="py-4 px-6">${maxInput}</td>
+                                    </tr>
+                                `;
+                            });
+                            if (!hasUngradedStudents) {
+                                document.getElementById('submitBtnContainer').style.display = 'none';
+                            } else {
+                                document.getElementById('submitBtnContainer').style.display = 'flex';
+                            }
+                        }
+                        if(window.lucide) lucide.createIcons();
+                    };
+                    
+                    renderStudentsList(currentStudents);
+                    
+                    // Simple animation for the container
+                    if (window.gsap) {
+                        gsap.from("#dataContainer", { duration: 0.5, opacity: 0, y: 20, ease: "power2.out" });
+                    }
+                } catch(e) {
+                    console.error(e);
+                    utils.showToast('Failed to load students', 'error');
+                }
+            });
+
+            document.getElementById('submitForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const subjSelect = document.getElementById('selSubject');
+                const subjectId = subjSelect.value;
+                const semester = document.getElementById('selSemester').value;
+                const academicYear = '2026-2027';
+
+                const btn = document.querySelector('#submitBtnContainer button');
+                const origText = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Saving...';
+                if(window.lucide) lucide.createIcons();
+                btn.disabled = true;
+
+                let promises = [];
+                for (let student of currentStudents) {
+                    let studentId = student.student_id || student.id;
+                    let marks = formData.get('marks_' + studentId);
+                    let max = formData.get('max_' + studentId);
+                    
+                    if(marks && max) {
+                        let payload = {
+                            student: studentId,
+                            subject: subjectId,
+                            semester: semester,
+                            academic_year: academicYear,
+                            marks_obtained: marks,
+                            max_marks: max,
+                            is_published: false
+                        };
+                        promises.push(api.post('/results/', payload));
+                    }
+                }
+
+                try {
+                    await Promise.all(promises);
+                    utils.showToast('Results saved successfully!', 'success');
+                } catch(e) {
+                    utils.showToast('Some results failed to save', 'error');
+                } finally {
+                    btn.innerHTML = origText;
+                    if(window.lucide) lucide.createIcons();
+                    btn.disabled = false;
+                }
+            });
+
+            const localSearchInput = document.getElementById('localSearchInput');
+            if (localSearchInput) {
+                localSearchInput.addEventListener('input', (e) => {
+                    const val = e.target.value.toLowerCase();
+                    document.querySelectorAll('.student-row').forEach(row => {
+                        const name = row.dataset.name;
+                        const roll = row.dataset.roll;
+                        if (name.includes(val) || roll.includes(val)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <script src="../js/animations.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Approvals - Faculty Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], outfit: ['Outfit', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .sidebar-item-link { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar-item-link:hover { transform: translateX(4px); }
+        #facultySidebar { transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .collapsed-sidebar { width: 5rem !important; }
+        .collapsed-sidebar .brand-text,
+        .collapsed-sidebar .nav-text,
+        .collapsed-sidebar .logout-text { display: none !important; }
+        .collapsed-sidebar .sidebar-item-link { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
+        .collapsed-sidebar .brand-logo-container { justify-content: center; padding-left: 0 !important; padding-right: 0 !important; }
+        .collapsed-sidebar .sidebar-item-link:hover { transform: none !important; }
+    </style>
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/premium-theme.css?v=6">
+</head>
+<body class="min-h-screen flex bg-slate-50 overflow-hidden">
+
+    <div class="flex w-full min-h-screen overflow-hidden">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-50 shadow-xl fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="facultySidebar">
+            <div>
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                    <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
+                    <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
+                    <button id="closeSidebar" onclick="this.closest('aside').classList.add('-translate-x-full'); this.closest('aside').style.transform = ''; const ov = document.getElementById(this.closest('aside').id + 'Overlay'); if(ov) ov.classList.add('hidden');" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <nav class="mt-6 px-3 space-y-1">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="attendance.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="calendar" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Mark Attendance</span>
+                    </a>
+                    <a href="leave.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Leave Approvals</span>
+                    </a>
+                    <a href="results.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-200 hover:bg-slate-800 hover:text-white transition-all font-medium sidebar-item-link">
+                        <i data-lucide="file-text" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Manage Results</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-800">
+                <button class="w-full flex items-center justify-center gap-2 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
+                    <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        <script>if(window.lucide) lucide.createIcons();</script>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+
+            <!-- Top Navbar -->
+                        <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm flex justify-center sticky top-0 z-50 px-6 lg:px-8" id="topNavbar">
+                <div class="max-w-7xl w-full flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <button id="sidebarToggle" class="p-2 bg-white text-slate-600 rounded-lg shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors block lg:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h2 class="text-base sm:text-xl font-extrabold text-slate-800 font-outfit truncate leading-tight">Leave Approvals</h2>
+                </div>
+                    <div class="flex items-center gap-3 sm:gap-6 shrink-0">
+                    <div class="relative cursor-pointer hover:text-blue-600 transition-colors flex items-center justify-center" id="bellNotify">
+                        <i data-lucide="bell" class="w-6 h-6 text-slate-600"></i>
+                        <span class="notification-badge absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3 border-l border-slate-150 pl-3 sm:pl-6">
+                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="userAvatar">F</div>
+                        <span class="font-semibold text-slate-700 text-sm hidden sm:block" id="userName">Faculty</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 lg:py-8" id="mainDashboard">
+                <div class="max-w-7xl w-full mx-auto">
+                    <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row justify-between items-center gap-2">
+                            <div class="flex items-center gap-3">
+                                <h3 class="text-base font-bold text-slate-800">Student Leave Requests</h3>
+                                <span id="leaveCount" class="px-3 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200"></span>
+                            </div>
+                            
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="ant-table" id="leavesTable">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                                        <th class="py-3 px-4  ">Student</th>
+                                        <th class="py-3 px-4  ">Type</th>
+                                        <th class="py-3 px-4  ">From</th>
+                                        <th class="py-3 px-4  ">To</th>
+                                        <th class="py-3 px-4  ">Reason</th>
+                                        <th class="relative group py-3 px-4">
+                                        <div class="flex items-center justify-between gap-2 cursor-pointer filter-popover-trigger">
+                                            <span>Status</span>
+                                            <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-500 hover:text-blue-700"></i>
+                                        </div>
+                                        <div class="filter-popover-content absolute hidden top-full mt-1 left-0 bg-white border border-slate-200 shadow-xl p-2 rounded-lg z-10 w-48 font-normal normal-case text-slate-800">
+                                            <select id="statusFilter" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none transition-all text-xs font-normal normal-case">
+                                                <option value="">All</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Approved">Approved</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </select>
+                                        </div>
+                                    </th>
+                                        <th class="py-3 px-4 text-center  ">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                                    <tr><td colspan="7" class="py-10 text-center text-slate-400">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js?v=5"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if(window.lucide) lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!auth.checkAuth() || !auth.hasRole('faculty')) return;
+            const user = auth.getUser();
+            document.getElementById('userName').textContent = user.name || 'Faculty';
+            document.getElementById('userAvatar').textContent = (user.name || 'F')[0].toUpperCase();
+
+            const sidebar = document.getElementById('facultySidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            if (sidebar && toggleBtn) {
+                toggleBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed-sidebar'));
+            }
+
+            await loadLeaves();
+            
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            if (searchInput) searchInput.addEventListener('input', loadLeaves);
+            if (statusFilter) statusFilter.addEventListener('change', loadLeaves);
+        });
+
+        async function loadLeaves() {
+            try {
+                const search = document.getElementById('searchInput')?.value;
+                const status = document.getElementById('statusFilter')?.value;
+                let url = '/leave/';
+                const params = [];
+                if (search) params.push(`search=${encodeURIComponent(search)}`);
+                if (status) params.push(`status=${encodeURIComponent(status)}`);
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                const data = await api.get(url);
+                const tbody = document.querySelector('#leavesTable tbody');
+                const pending = data.filter(l => l.status === 'pending').length;
+                document.getElementById('leaveCount').textContent = pending + ' Pending';
+                
+                if (data.length) {
+                    tbody.innerHTML = data.map(l => `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-3.5 px-4 font-semibold text-slate-800">${l.student_details?.name || '—'}</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded border border-slate-200 uppercase">${l.leave_type}</span></td>
+                            <td class="py-3.5 px-4">${l.from_date}</td>
+                            <td class="py-3.5 px-4">${l.to_date}</td>
+                            <td class="py-3.5 px-4 max-w-xs truncate">${l.reason}</td>
+                            <td class="py-3.5 px-4">
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${l.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : l.status === 'rejected' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${l.status}</span>
+                            </td>
+                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                ${l.status === 'pending' ? `
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <button class="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 hover:border-emerald-600 text-emerald-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'approve')"><i data-lucide="check" class="w-3.5 h-3.5"></i> Approve</button>
+                                        <button class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 text-rose-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'reject')"><i data-lucide="x" class="w-3.5 h-3.5"></i> Reject</button>
+                                    </div>
+                                ` : '<span class="text-slate-400">—</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                    if(window.lucide) lucide.createIcons();
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-slate-400">No leave requests found.</td></tr>';
+                }
+            } catch(e) {
+                console.error(e);
+                document.querySelector('#leavesTable tbody').innerHTML = '<tr><td colspan="7" class="py-10 text-center text-red-400">Failed to load leave requests.</td></tr>';
+            }
+        }
+
+        async function updateLeave(id, action) {
+            try {
+                await api.put(`/leave/${id}/${action}/`, {});
+                utils.showToast(`Leave ${action}d successfully!`, 'success');
+                loadLeaves();
+            } catch(e) {
+                utils.showToast(`Failed to ${action} leave`, 'error');
+            }
+        }
+    </script>
+    <script src="../js/animations.js?v=2"></script>
+</body>
+</html>
