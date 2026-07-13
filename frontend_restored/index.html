@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Smart Campus Management</title>
@@ -429,10 +430,10 @@
     </div>
 
     <script src="js/api.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="js/utils.js?v=6"></script>
     <script src="js/auth.js"></script>
     <script>
-    (() => {
+    document.addEventListener('DOMContentLoaded', () => {
         /* ── Particle System ── */
         const canvas = document.getElementById('particleCanvas');
         const ctx    = canvas.getContext('2d');
@@ -516,10 +517,10 @@
         }
 
         /* ── Init icons ── */
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
 
         /* ── GSAP Master Timeline ── */
-        const tl = gsap.timeline({ delay: 0.1 });
+        const tl = gsap.timeline({ delay: 0 });
 
         tl.to('.blob', { opacity: 0.45, duration: 1.4, stagger: 0.2, ease: 'power2.out' }, 0);
 
@@ -598,7 +599,7 @@
             toggleBtn.innerHTML = show
                 ? '<i data-lucide="eye-off" style="width:16px;height:16px;"></i>'
                 : '<i data-lucide="eye"     style="width:16px;height:16px;"></i>';
-            lucide.createIcons();
+            if(window.lucide) lucide.createIcons();
             gsap.fromTo(toggleBtn, { rotate: 0 }, { rotate: 360, duration: 0.35, ease: 'power2.out' });
         });
 
@@ -638,6 +639,14 @@
         const emailInput = document.getElementById('email');
         const emailError = document.getElementById('emailError');
         const passError  = document.getElementById('passwordError');
+
+        // Automatically trim whitespace from email (useful for copy-pasting)
+        emailInput.addEventListener('input', function() {
+            this.value = this.value.trim();
+        });
+        emailInput.addEventListener('blur', function() {
+            this.value = this.value.trim();
+        });
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -681,13 +690,13 @@
                 [emailInput, passInput].forEach(inp => {
                     gsap.fromTo(inp,
                         { borderColor:'#ef4444', boxShadow:'0 0 0 3px rgba(239,68,68,0.25)' },
-                        { borderColor:'', boxShadow:'', duration:1.2, delay:0.2, clearProps:'all' }
+                        { borderColor:'', boxShadow:'', duration:1.2, delay: 0, clearProps:'all' }
                     );
                 });
             }
         });
 
-    })();
+    });
     </script>
 </body>
 </html>
