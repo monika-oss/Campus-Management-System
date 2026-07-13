@@ -846,6 +846,25 @@ utils.exportTableToCSV = function(tableId, filename) {
     document.body.removeChild(downloadLink);
 };
 
+utils.showTableSkeleton = function(target, colCount, rowCount = 5) {
+    const tbody = (typeof target === 'string') ? document.querySelector(target) : target;
+    if (!tbody) return;
+    
+    let skeletonHtml = '';
+    for (let r = 0; r < rowCount; r++) {
+        skeletonHtml += `<tr class="animate-pulse border-b border-slate-100">`;
+        for (let c = 0; c < colCount; c++) {
+            skeletonHtml += `
+                <td class="py-4 px-4">
+                    <div class="skeleton-bar"></div>
+                </td>`;
+        }
+        skeletonHtml += `</tr>`;
+    }
+    tbody.innerHTML = skeletonHtml;
+};
+
+
 utils.showViewModal = function(title, dataObj) {
     let modal = document.getElementById('genericViewModal');
     if (!modal) {

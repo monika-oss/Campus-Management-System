@@ -463,6 +463,7 @@
         });
         async function loadStudents() {
             try {
+                utils.showTableSkeleton('#studentsTable tbody', 6, ITEMS_PER_PAGE);
                 const search = document.getElementById('searchInput')?.value || document.getElementById('regSearchInput')?.value || document.getElementById('topSearchInput')?.value || '';
                 const dept = document.getElementById('deptFilter')?.value || document.getElementById('topDeptFilter')?.value || '';
                 let url = '/students/';

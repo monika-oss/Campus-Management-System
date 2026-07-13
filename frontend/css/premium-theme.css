@@ -617,8 +617,7 @@ input[value="onduty"]:checked + .radio-btn { background: var(--accent-primary); 
 }
 
 .overflow-x-auto {
-    max-height: 480px;
-    overflow-y: auto !important;
     overflow-x: auto !important;
+    overflow-y: visible !important;
     position: relative;
 }

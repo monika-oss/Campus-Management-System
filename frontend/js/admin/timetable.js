@@ -159,6 +159,7 @@ const ITEMS_PER_PAGE = 6;
 
 async function loadTimetable() {
     try {
+        utils.showTableSkeleton('#timetableTableBody', 7, ITEMS_PER_PAGE);
         const dept = document.getElementById('filterDept')?.value || '';
         const year = document.getElementById('filterYear')?.value || '';
         const day = document.getElementById('filterDay')?.value || '';
