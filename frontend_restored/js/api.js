@@ -1,4 +1,4 @@
-const API_BASE = 'https://campus-management-system-production-7bbb.up.railway.app/api';
+const API_BASE = 'https://campus-management-system-production-a629.up.railway.app/api';
 
 const api = {
   async request(method, endpoint, data = null) {
