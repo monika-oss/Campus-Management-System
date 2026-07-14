@@ -276,6 +276,7 @@
 
         async function loadNotifications() {
             try {
+                utils.showTableSkeleton('#notificationsTable tbody', 5, ITEMS_PER_PAGE);
                 const search = document.getElementById('searchInput')?.value;
                 let url = '/notifications/';
                 if (search) {

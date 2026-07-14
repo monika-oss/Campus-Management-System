@@ -235,7 +235,7 @@
 
         async function loadLeaves() {
             try {
-                utils.showTableSkeleton('#leaveTable tbody', 7, ITEMS_PER_PAGE);
+                utils.showTableSkeleton('#leavesTable tbody', 7, ITEMS_PER_PAGE);
                 const search = document.getElementById('searchInput')?.value;
                 const status = document.getElementById('statusFilter')?.value;
                 let url = '/leave/';

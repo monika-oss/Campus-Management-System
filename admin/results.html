@@ -234,22 +234,24 @@
             }
 
             // Populate bulk subjects dropdown
-            try {
-                const subjects = await api.get('/students/subjects/');
-                const bulkSubjectSelect = document.getElementById('bulkSubject');
-                if (subjects && subjects.length) {
-                    subjects.forEach(sub => {
-                        bulkSubjectSelect.innerHTML += `<option value="${sub.subject_id}">${sub.subject_name}</option>`;
-                    });
+            (async () => {
+                try {
+                    const subjects = await api.get('/students/subjects/');
+                    const bulkSubjectSelect = document.getElementById('bulkSubject');
+                    if (subjects && subjects.length) {
+                        subjects.forEach(sub => {
+                            bulkSubjectSelect.innerHTML += `<option value="${sub.subject_id}">${sub.subject_name}</option>`;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Failed to load subjects:', e);
                 }
-            } catch (e) {
-                console.error('Failed to load subjects:', e);
-            }
+            })();
 
             // Fetch and render results
             async function loadResults() {
                 try {
-                utils.showTableSkeleton('#resultsTableBody', 7, ITEMS_PER_PAGE);
+                    utils.showTableSkeleton('#resultsTable tbody', 7, ITEMS_PER_PAGE);
                     const data = await api.get('/results/');
                     window.resultsData = data;
                     resultsCurrentPage = 1;
