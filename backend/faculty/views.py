@@ -52,9 +52,9 @@ class FacultyViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def today_classes(self, request, pk=None):
-        import datetime
+        from django.utils import timezone
         faculty = self.get_object()
-        today = datetime.datetime.now().strftime('%A')
+        today = timezone.localtime(timezone.now()).strftime('%A')
         from students.models import Timetable
         from students.serializers import TimetableSerializer
         
