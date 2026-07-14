@@ -168,19 +168,7 @@
                                 <!-- Loaded via JS -->
                             </select>
                         </div>
-                        <div class="w-full md:w-32">
-                            <label class="block text-sm font-semibold text-slate-700 mb-1.5">Period</label>
-                            <select id="attPeriod" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                            </select>
-                        </div>
+
                         <div class="w-full md:w-48">
                             <label class="block text-sm font-semibold text-slate-700 mb-1.5">Date</label>
                             <input type="date" id="attDate" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
@@ -264,7 +252,7 @@
                     } else {
                         classes.forEach(c => {
                             const name = c.subject_details ? c.subject_details.subject_name : 'Sub '+c.subject;
-                            select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section}">Period ${c.period_number} - ${name} (${c.year} Yr, Sec ${c.section})</option>`;
+                            select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section}" data-period="${c.period_number}">Period ${c.period_number} - ${name} (${c.year} Yr, Sec ${c.section})</option>`;
                         });
                     }
                 }
@@ -356,8 +344,10 @@
             
             document.getElementById('attendanceSubmitForm').addEventListener('submit', async(e) => {
                 e.preventDefault();
-                const subject_id = document.getElementById('attSubject').value;
-                const period_number = document.getElementById('attPeriod').value;
+                const subjSelect = document.getElementById('attSubject');
+                const subject_id = subjSelect.value;
+                const opt = subjSelect.options[subjSelect.selectedIndex];
+                const period_number = opt.dataset.period;
                 const date = document.getElementById('attDate').value;
                 
                 const attendances = [];
