@@ -120,11 +120,11 @@ async function loadTimetable() {
         timetableList.forEach(tt => {
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="py-4 px-6 text-slate-700 font-medium">${tt.day_of_week}</td>
-                    <td class="py-4 px-6 text-slate-600">Period ${tt.period_number}</td>
-                    <td class="py-4 px-6 text-slate-600"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-xs font-semibold">${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'} - ${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}</span></td>
-                    <td class="py-4 px-6 text-slate-600">Yr ${tt.year}</td>
-                    <td class="py-4 px-6 text-slate-600 font-semibold">${tt.department}</td>
+                    <td class="py-4 px-6 text-slate-700 font-medium whitespace-nowrap">${tt.day_of_week}</td>
+                    <td class="py-4 px-6 text-slate-600 whitespace-nowrap">Period ${tt.period_number}</td>
+                    <td class="py-4 px-6 text-slate-600 whitespace-nowrap"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap">${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'} - ${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}</span></td>
+                    <td class="py-4 px-6 text-slate-600 whitespace-nowrap">Yr ${tt.year}</td>
+                    <td class="py-4 px-6 text-slate-600 font-semibold whitespace-nowrap">${tt.department}</td>
                     <td class="py-4 px-6 text-slate-600">${tt.subject_details ? tt.subject_details.subject_name : 'Subject ' + tt.subject}</td>
                     <td class="py-4 px-6 text-slate-600">${tt.faculty_name || 'Faculty ' + tt.faculty}</td>
                     <td class="py-4 px-6">
