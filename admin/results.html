@@ -249,6 +249,7 @@
             // Fetch and render results
             async function loadResults() {
                 try {
+                utils.showTableSkeleton('#resultsTableBody', 7, ITEMS_PER_PAGE);
                     const data = await api.get('/results/');
                     window.resultsData = data;
                     resultsCurrentPage = 1;
@@ -301,7 +302,7 @@
                     const newStatus = !currentStatus;
                     await api.patch(`/results/${id}/`, { is_published: newStatus });
                     utils.showToast(newStatus ? 'Result published successfully!' : 'Result unpublished successfully!', 'success');
-                    await loadResults();
+                    loadResults();
                 } catch (e) {
                     console.error(e);
                     utils.showToast('Failed to update result status', 'error');
@@ -326,7 +327,7 @@
                         semester: semester || null
                     });
                     utils.showToast('Selected results published successfully!', 'success');
-                    await loadResults();
+                    loadResults();
                 } catch (e) {
                     console.error(e);
                     utils.showToast('Failed to bulk publish results', 'error');
@@ -337,7 +338,7 @@
                 }
             });
 
-            await loadResults();
+            loadResults();
         });
     </script>
     <script src="../js/animations.js"></script>

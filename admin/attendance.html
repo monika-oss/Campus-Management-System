@@ -218,8 +218,8 @@
             }
             }
             
-            await loadDepartments();
-            await loadAttendanceData();
+            loadDepartments();
+            loadAttendanceData();
 
             const searchInput = document.getElementById('searchInput');
             const deptFilter = document.getElementById('deptFilter');
@@ -229,6 +229,7 @@
 
         async function loadAttendanceData() {
             try {
+                utils.showTableSkeleton('#attendanceTable tbody', 6, ITEMS_PER_PAGE);
                 const search = document.getElementById('searchInput')?.value;
                 const dept = document.getElementById('deptFilter')?.value;
                 let url = '/attendance/';

@@ -400,9 +400,8 @@
                     console.error("Error loading departments", e);
                 }
             }
-            await loadDepartments();
-
-            await loadStudents();
+            loadDepartments();
+            loadStudents();
 
             // Set up search and filter events
             if(document.getElementById('searchInput')) document.getElementById('searchInput').addEventListener('input', loadStudents);

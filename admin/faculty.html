@@ -363,38 +363,40 @@
             }
 
             // Load Departments
-            try {
-                const depts = await api.get('/students/departments/');
-                const fDept = document.getElementById('f_dept');
-                const deptFilter = document.getElementById('deptFilter');
-                
-                depts.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.id;
-                    opt.textContent = `${d.code} - ${d.name}`;
-                    fDept.appendChild(opt);
-
-                    const optEdit = document.createElement('option');
-                    optEdit.value = d.id;
-                    optEdit.textContent = `${d.code} - ${d.name}`;
-                    document.getElementById('ef_dept').appendChild(optEdit);
+            (async () => {
+                try {
+                    const depts = await api.get('/students/departments/');
+                    const fDept = document.getElementById('f_dept');
+                    const deptFilter = document.getElementById('deptFilter');
                     
-                    if (deptFilter) {
-                        const optFilter = document.createElement('option');
-                        optFilter.value = d.code;
-                        optFilter.textContent = d.code;
-                        deptFilter.appendChild(optFilter);
-                        const optTopFilter = document.createElement('option');
-                        optTopFilter.value = d.code;
-                        optTopFilter.textContent = d.code;
-                        document.getElementById('topDeptFilter')?.appendChild(optTopFilter);
-                    }
-                });
-            } catch (e) {
-                console.error(e);
-            }
+                    depts.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.id;
+                        opt.textContent = `${d.code} - ${d.name}`;
+                        fDept.appendChild(opt);
 
-            await loadFaculty();
+                        const optEdit = document.createElement('option');
+                        optEdit.value = d.id;
+                        optEdit.textContent = `${d.code} - ${d.name}`;
+                        document.getElementById('ef_dept').appendChild(optEdit);
+                        
+                        if (deptFilter) {
+                            const optFilter = document.createElement('option');
+                            optFilter.value = d.code;
+                            optFilter.textContent = d.code;
+                            deptFilter.appendChild(optFilter);
+                            const optTopFilter = document.createElement('option');
+                            optTopFilter.value = d.code;
+                            optTopFilter.textContent = d.code;
+                            document.getElementById('topDeptFilter')?.appendChild(optTopFilter);
+                        }
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+            })();
+
+            loadFaculty();
 
             const searchInput = document.getElementById('searchInput');
             const deptFilter = document.getElementById('deptFilter');
@@ -459,6 +461,7 @@
         });
         async function loadFaculty() {
             try {
+                utils.showTableSkeleton('#facultyTable tbody', 5, ITEMS_PER_PAGE);
                 const search = document.getElementById('searchInput')?.value || document.getElementById('empIdSearchInput')?.value || document.getElementById('topSearchInput')?.value || '';
                 const dept = document.getElementById('deptFilter')?.value || document.getElementById('topDeptFilter')?.value || '';
                 let url = '/faculty/';

@@ -101,6 +101,7 @@ async function loadFaculty() {
 
 async function loadTimetable() {
     try {
+        utils.showTableSkeleton('#timetableTableBody', 7, 5);
         const timetableList = await api.get('/students/timetable/');
         const tbody = document.getElementById('timetableTableBody');
         if (!tbody) return;
