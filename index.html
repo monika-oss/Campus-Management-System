@@ -34,7 +34,8 @@
             font-family: 'Inter', sans-serif;
             background: var(--bg-deep);
             color: var(--text-primary);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         /* Canvas particle layer */
@@ -82,14 +83,14 @@
             position: relative;
             z-index: 10;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
             min-height: 100vh;
             padding: 24px 16px;
         }
 
         /* Login card */
         #loginCard {
+            margin: auto;
             width: 100%;
             max-width: 460px;
             background: var(--glass-bg);
