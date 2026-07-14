@@ -1,6 +1,4 @@
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.')
-  ? 'https://campus-management-system-zrh8.onrender.com/api'
-  : '/api';
+const API_BASE = 'https://campus-management-system-zrh8.onrender.com/api';
 
 const api = {
   async request(method, endpoint, data = null) {
