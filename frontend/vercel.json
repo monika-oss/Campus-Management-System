@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://campus-management-system-production-a629.up.railway.app/api/:path*"
+    }
+  ]
+}
