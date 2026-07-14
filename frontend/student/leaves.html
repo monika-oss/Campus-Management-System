@@ -46,7 +46,7 @@
                         <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text whitespace-nowrap">Smart Campus</span>
                     </div>
                     <button class="close-sidebar-btn shrink-0 lg:hidden text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-slate-800 focus:outline-none">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <i data-lucide="x" class="w-4 h-4 shrink-0"></i>
                     </button>
                 </div>
                 <nav class="mt-6 px-3 space-y-1">
@@ -112,7 +112,7 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 lg:p-8">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-xl font-bold text-slate-800 font-outfit">Apply for Leave</h3>
-                <button onclick="closeModal()" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button onclick="closeModal()" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors text-slate-500"><i data-lucide="x" class="w-4 h-4 shrink-0"></i></button>
             </div>
             <form id="leaveForm" class="space-y-4">
                 <div>
@@ -291,7 +291,7 @@
                     <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-start justify-between gap-4">
                         <div class="flex items-start gap-4">
                             <div class="w-10 h-10 rounded-xl ${l.leave_type === 'medical' ? 'bg-red-50' : l.leave_type === 'emergency' ? 'bg-orange-50' : 'bg-blue-50'} flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="${l.leave_type === 'medical' ? 'heart-pulse' : l.leave_type === 'emergency' ? 'alert-triangle' : 'calendar'}" class="w-4 h-4 ${l.leave_type === 'medical' ? 'text-red-500' : l.leave_type === 'emergency' ? 'text-orange-500' : 'text-blue-500'}"></i>
+                                <i data-lucide="${l.leave_type === 'medical' ? 'heart-pulse' : l.leave_type === 'emergency' ? 'alert-triangle' : 'calendar'}" class="w-4 h-4 shrink-0 ${l.leave_type === 'medical' ? 'text-red-500' : l.leave_type === 'emergency' ? 'text-orange-500' : 'text-blue-500'}"></i>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 flex-wrap">
