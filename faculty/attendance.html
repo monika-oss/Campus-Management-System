@@ -284,8 +284,9 @@
                 
                 try {
                     let url = `/faculty/${user.faculty_id}/students/?`;
-                    if (year) url += `year=${year}`;
-                    if (sec && sec !== 'null' && sec !== 'None') url += `&section=${sec}`;
+                    if (dept) url += `department=${dept}&`;
+                    if (year) url += `year=${year}&`;
+                    if (sec && sec !== 'null' && sec !== 'None') url += `section=${sec}`;
                     
                     const students = await api.get(url);
                     

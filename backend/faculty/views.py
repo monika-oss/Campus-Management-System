@@ -31,9 +31,13 @@ class FacultyViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def students(self, request, pk=None):
         faculty = self.get_object()
-        # Returns students in the same department as the faculty
-        if faculty.department:
+        dept_id = request.query_params.get('department')
+        if dept_id:
+            students = Student.objects.filter(department_id=dept_id)
+        elif faculty.department:
             students = Student.objects.filter(department=faculty.department)
+        else:
+            return Response([])
             year = request.query_params.get('year')
             section = request.query_params.get('section')
             
