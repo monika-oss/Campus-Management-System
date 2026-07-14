@@ -3,12 +3,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     lucide.createIcons();
     if (!auth.checkAuth() || !auth.hasRole('admin')) return;
 
-    // GSAP Transitions
-    if (window.gsap) {
-        gsap.to("#adminSidebar", { duration: 0.8, x: 0, ease: "power4.out" });
-        gsap.to("#topNavbar", { duration: 0.8, opacity: 1, ease: "power2.out", delay: 0.2 });
-        gsap.to(".content-block", { duration: 0.8, opacity: 1, y: 0, ease: "power3.out", delay: 0.3 });
-    }
 
     loadDepartments();
     loadSubjects();
