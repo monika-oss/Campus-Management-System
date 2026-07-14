@@ -365,12 +365,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${detailsHTML}
                         </div>
                     </div>
-                    <div class="pt-3 border-t border-slate-100 space-y-1">
-                        <button onclick="renderProfileDropdown('reset', event)" class="w-full flex items-center justify-center gap-2 hover:bg-blue-50 hover:text-blue-600 text-slate-600 py-2 rounded-xl transition-all font-semibold border border-transparent hover:border-blue-100 text-sm">
-                            <i data-lucide="key-round" class="w-4 h-4"></i> Reset Password
+                    <div class="pt-3 border-t border-slate-100 space-y-2">
+                        <button onclick="renderProfileDropdown('reset', event)" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-blue-50 hover:text-blue-600 text-slate-700 py-2.5 rounded-xl transition-all font-semibold border border-slate-200 hover:border-blue-200 shadow-sm text-sm">
+                            <i data-lucide="key-round" class="w-4 h-4 text-blue-500"></i> Reset Password
                         </button>
-                        <button onclick="auth.logout()" class="w-full flex items-center justify-center gap-2 hover:bg-rose-50 hover:text-rose-600 text-slate-600 py-2 rounded-xl transition-all font-semibold border border-transparent hover:border-rose-100 text-sm">
-                            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                        <button onclick="auth.logout()" class="w-full flex items-center justify-center gap-2 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 text-slate-700 py-2.5 rounded-xl transition-all font-semibold border border-slate-200 hover:border-rose-200 shadow-sm text-sm">
+                            <i data-lucide="log-out" class="w-4 h-4 text-rose-500"></i> Logout
                         </button>
                     </div>
                 `;
