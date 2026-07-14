@@ -10,15 +10,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         gsap.to(".content-block", { duration: 0.8, opacity: 1, y: 0, ease: "power3.out", delay: 0.3 });
     }
 
-    // Sidebar Collapsible Toggle
-    const sidebar = document.getElementById('adminSidebar');
-    const toggleBtn = document.getElementById('sidebarToggle');
-    if (sidebar && toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed-sidebar');
-        });
-    }
-
     loadDepartments();
     loadSubjects();
     loadFaculty();
