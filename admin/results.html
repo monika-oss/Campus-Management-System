@@ -272,14 +272,14 @@
                         const isPub = r.is_published;
                         return `
                             <tr>
-                                <td class="py-3.5 px-4 font-semibold text-slate-800">${r.student_details?.name}</td>
-                                <td class="py-3.5 px-4 font-medium">${r.subject_details?.subject_name}</td>
-                                <td class="py-3.5 px-4">${r.semester} Semester</td>
-                                <td class="py-3.5 px-4 font-bold text-slate-800">${r.marks_obtained} <span class="text-xs text-slate-400 font-normal">/ ${r.max_marks}</span></td>
-                                <td class="py-3.5 px-4">
+                                <td class="py-3.5 px-4 font-semibold text-slate-800 whitespace-nowrap">${r.student_details?.name}</td>
+                                <td class="py-3.5 px-4 font-medium whitespace-nowrap">${r.subject_details?.subject_name}</td>
+                                <td class="py-3.5 px-4 whitespace-nowrap">${r.semester} Semester</td>
+                                <td class="py-3.5 px-4 font-bold text-slate-800 whitespace-nowrap">${r.marks_obtained} <span class="text-xs text-slate-400 font-normal">/ ${r.max_marks}</span></td>
+                                <td class="py-3.5 px-4 whitespace-nowrap">
                                     <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${isPub ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${isPub ? 'Yes' : 'No'}</span>
                                 </td>
-                                <td class="py-3.5 px-4 text-center">
+                                <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                     <button onclick="togglePublish(${resultId}, ${isPub})" class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${isPub ? 'border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100' : 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'}">
                                         ${isPub ? 'Unpublish' : 'Publish'}
                                     </button>
