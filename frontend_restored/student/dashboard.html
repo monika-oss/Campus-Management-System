@@ -30,7 +30,11 @@
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .att-bar { height: 8px; border-radius: 999px; background: #e2e8f0; overflow: hidden; }
         .att-fill { height: 100%; border-radius: 999px; transition: width 0.8s ease; }
-    </style>
+    
+        /* Hide all scrollbars visually but keep scroll functionality */
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+</style>
     <link rel="stylesheet" href="../css/animations.css?v=7">
     <link rel="stylesheet" href="../css/premium-theme.css?v=7">
 </head>
