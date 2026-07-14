@@ -38,17 +38,17 @@ class FacultyViewSet(viewsets.ModelViewSet):
             students = Student.objects.filter(department=faculty.department)
         else:
             return Response([])
-            year = request.query_params.get('year')
-            section = request.query_params.get('section')
             
-            if year:
-                students = students.filter(year=year)
-            if section:
-                students = students.filter(section=section)
-                
-            serializer = StudentSerializer(students, many=True)
-            return Response(serializer.data)
-        return Response([])
+        year = request.query_params.get('year')
+        section = request.query_params.get('section')
+        
+        if year:
+            students = students.filter(year=year)
+        if section:
+            students = students.filter(section=section)
+            
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data)
 
     @action(detail=True, methods=['get'])
     def today_classes(self, request, pk=None):
