@@ -681,7 +681,17 @@
             } catch (err) {
                 btn.classList.remove('loading');
                 btn.disabled = false;
-                showToast('Invalid credentials. Please try again.', 'error');
+                let errorMsg = 'Invalid credentials. Please try again.';
+                if (err && err.status) {
+                    if (err.status === 401) {
+                        errorMsg = 'Invalid Email or Password (401)';
+                    } else {
+                        errorMsg = `Server Error (${err.status})`;
+                    }
+                } else {
+                    errorMsg = 'Network Error: Cannot connect to server';
+                }
+                showToast(errorMsg, 'error');
                 gsap.to('#loginCard', {
                     duration: 0.08, x: 12, repeat: 7, yoyo: true,
                     ease: 'power1.inOut',
