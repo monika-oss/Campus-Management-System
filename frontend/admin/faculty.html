@@ -170,7 +170,7 @@
                     </div>
 
                     <!-- Faculty Table -->
-                    <div class="overflow-x-auto overflow-y-hidden">
+                    <div class="overflow-x-auto" style="overflow-y: clip">
                         <table class="ant-table" id="facultyTable">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-semibold uppercase tracking-wider">
@@ -305,7 +305,7 @@
     <script>
         if(window.lucide) lucide.createIcons();
         let facultyCurrentPage = 1;
-        const ITEMS_PER_PAGE = 6;
+        const ITEMS_PER_PAGE = 5;
         document.addEventListener('DOMContentLoaded', async () => {
             if (!auth.checkAuth() || !auth.hasRole('admin')) return;
 
