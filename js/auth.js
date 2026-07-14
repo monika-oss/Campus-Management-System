@@ -44,7 +44,9 @@ const auth = {
   },
 
   login(email, password) {
-    return api.post('/auth/login/', { email, password })
+    const cleanEmail = (email || '').trim();
+    const cleanPassword = (password || '').trim();
+    return api.post('/auth/login/', { email: cleanEmail, password: cleanPassword })
       .then(data => {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
