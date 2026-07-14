@@ -1,70 +1,39 @@
-import os
-import re
+import os, re
 
-directories = [
-    r"c:\Users\preet\OneDrive\Desktop\Campus_Management\admin",
-    r"c:\Users\preet\OneDrive\Desktop\Campus_Management\faculty",
-    r"c:\Users\preet\OneDrive\Desktop\Campus_Management\frontend\admin",
-    r"c:\Users\preet\OneDrive\Desktop\Campus_Management\frontend\faculty",
-]
+frontend_dir = r'c:\Users\preet\OneDrive\Desktop\Campus_Management\frontend'
 
-overlay_admin = '<div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>'
-overlay_faculty = '<div id="facultySidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>'
+for root, dirs, files in os.walk(frontend_dir):
+    for f in files:
+        if f.endswith('.html'):
+            filepath = os.path.join(root, f)
+            with open(filepath, 'r', encoding='utf-8') as file:
+                content = file.read()
+            
+            new_content = content
+            
+            # Replace left/start alignments with right/end alignment for button wrappers
+            new_content = re.sub(r'class="([^"]*)justify-start md:justify-end([^"]*)"', r'class="\1justify-end\2"', new_content)
+            
+            # For the button container
+            # Current: class="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto justify-end"
+            # We add self-end to push the container itself to the right inside the flex-col parent
+            new_content = new_content.replace(
+                'class="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto justify-end"',
+                'class="flex flex-row flex-wrap items-center gap-2 w-full md:w-auto justify-end self-end mt-2 md:mt-0"'
+            )
+            
+            new_content = new_content.replace(
+                'class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto justify-end"',
+                'class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto justify-end self-end mt-2 md:mt-0"'
+            )
 
-for directory in directories:
-    if not os.path.exists(directory):
-        continue
-    for filename in os.listdir(directory):
-        if filename.endswith(".html"):
-            filepath = os.path.join(directory, filename)
-            with open(filepath, 'r', encoding='utf-8') as f:
-                content = f.read()
+            # For timetable.html button
+            new_content = new_content.replace(
+                '<button class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-550 hover:scale-[1.02] text-white font-semibold py-1.5 px-4 text-sm rounded-xl shadow-md transition-all" onclick="openAddModal()">',
+                '<button class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-550 hover:scale-[1.02] text-white font-semibold py-1.5 px-4 text-sm rounded-xl shadow-md transition-all self-end md:self-auto mt-2 md:mt-0" onclick="openAddModal()">'
+            )
 
-            modified = False
-
-            # 1. Fix Admin Sidebar
-            if 'id="adminSidebar"' in content:
-                # Add inset-y-0 left-0 to aside classes
-                old_aside_class = 'fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300'
-                new_aside_class = 'fixed inset-y-0 left-0 lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300'
-                if old_aside_class in content:
-                    content = content.replace(old_aside_class, new_aside_class)
-                    modified = True
-                
-                # Insert overlay before the <aside if not already present
-                if 'id="adminSidebarOverlay"' not in content:
-                    # Find the <aside id="adminSidebar" ... tag
-                    aside_pattern = r'(<aside[^>]*id="adminSidebar"[^>]*>)'
-                    match = re.search(aside_pattern, content)
-                    if match:
-                        full_tag = match.group(1)
-                        content = content.replace(full_tag, overlay_admin + '\n        ' + full_tag)
-                        modified = True
-
-            # 2. Fix Faculty Sidebar
-            if 'id="facultySidebar"' in content:
-                # Add inset-y-0 left-0 to aside classes
-                old_aside_class = 'fixed lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300'
-                new_aside_class = 'fixed inset-y-0 left-0 lg:static h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300'
-                if old_aside_class in content:
-                    content = content.replace(old_aside_class, new_aside_class)
-                    modified = True
-                
-                # Insert overlay before the <aside if not already present
-                if 'id="facultySidebarOverlay"' not in content:
-                    # Clean up old bad overlay names if any (like id="sidebarOverlay")
-                    if 'id="sidebarOverlay"' in content:
-                        content = content.replace('id="sidebarOverlay"', 'id="facultySidebarOverlay"')
-                        modified = True
-                    else:
-                        aside_pattern = r'(<aside[^>]*id="facultySidebar"[^>]*>)'
-                        match = re.search(aside_pattern, content)
-                        if match:
-                            full_tag = match.group(1)
-                            content = content.replace(full_tag, overlay_faculty + '\n        ' + full_tag)
-                            modified = True
-
-            if modified:
-                with open(filepath, 'w', encoding='utf-8') as f:
-                    f.write(content)
-                print(f"Fixed sidebar in {directory}\\{filename}")
+            if new_content != content:
+                with open(filepath, 'w', encoding='utf-8') as file:
+                    file.write(new_content)
+                print(f'Updated {filepath}')
