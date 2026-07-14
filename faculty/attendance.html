@@ -283,7 +283,11 @@
                 const sec = opt.dataset.sec;
                 
                 try {
-                    const students = await api.get(`/faculty/${user.faculty_id}/students/`);
+                    let url = `/faculty/${user.faculty_id}/students/?`;
+                    if (year) url += `year=${year}`;
+                    if (sec && sec !== 'null' && sec !== 'None') url += `&section=${sec}`;
+                    
+                    const students = await api.get(url);
                     
                     const list = document.getElementById('studentsList');
                     currentStudents = students;

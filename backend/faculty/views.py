@@ -34,6 +34,14 @@ class FacultyViewSet(viewsets.ModelViewSet):
         # Returns students in the same department as the faculty
         if faculty.department:
             students = Student.objects.filter(department=faculty.department)
+            year = request.query_params.get('year')
+            section = request.query_params.get('section')
+            
+            if year:
+                students = students.filter(year=year)
+            if section:
+                students = students.filter(section=section)
+                
             serializer = StudentSerializer(students, many=True)
             return Response(serializer.data)
         return Response([])
