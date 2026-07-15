@@ -1062,7 +1062,7 @@ document.addEventListener('click', (e) => {
                 const cbRect = menu.getBoundingClientRect();
                 const rect = btn.getBoundingClientRect();
                 
-                let targetTop = rect.bottom + 4;
+                let targetTop = rect.bottom;
                 let targetLeft = rect.left;
                 
                 if (rect.bottom + 250 > window.innerHeight) {
@@ -1222,11 +1222,11 @@ document.addEventListener('mouseover', (e) => {
             const cbRect = dropdown.getBoundingClientRect();
             
             const rect = menuContainer.getBoundingClientRect();
-            let targetTop = rect.bottom + 4;
+            let targetTop = rect.bottom;
             
             if (rect.bottom + 150 > window.innerHeight) {
                 const dropHeight = dropdown.offsetHeight || 130;
-                targetTop = rect.top - dropHeight - 4;
+                targetTop = rect.top - dropHeight;
             }
             
             dropdown.style.bottom = 'auto';
@@ -1237,18 +1237,7 @@ document.addEventListener('mouseover', (e) => {
     }
 });
 
-// Update position if scrolling happens while hovering
-document.addEventListener('wheel', (e) => {
-    document.querySelectorAll('.group\/menu div[class*="absolute"]').forEach(dropdown => {
-        if (dropdown.style.position === 'fixed' && window.getComputedStyle(dropdown).opacity !== '0') {
-            // just reset it so it disappears or moves with scroll
-            dropdown.style.position = 'absolute';
-            dropdown.style.top = 'auto';
-            dropdown.style.left = 'auto';
-            dropdown.style.bottom = 'auto';
-        }
-    });
-}, {passive: true});
+
 
 
 // Update position if scrolling happens while filter popover is open
