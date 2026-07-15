@@ -1182,3 +1182,45 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// Escape overflow hidden for Action menus
+document.addEventListener('mouseover', (e) => {
+    const menuContainer = e.target.closest('.group\\/menu');
+    if (menuContainer) {
+        const dropdown = menuContainer.querySelector('div[class*="absolute"]');
+        if (dropdown && dropdown.style.position !== 'fixed') {
+            dropdown.style.position = 'fixed';
+            const rect = menuContainer.getBoundingClientRect();
+            // Check if it goes off bottom of screen
+            if (rect.bottom + 150 > window.innerHeight) {
+                dropdown.style.top = 'auto';
+                dropdown.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+            } else {
+                dropdown.style.bottom = 'auto';
+                dropdown.style.top = (rect.bottom + 4) + 'px';
+            }
+            dropdown.style.left = (rect.right - 144) + 'px'; 
+            dropdown.style.marginTop = '0';
+        }
+    }
+});
+
+// Update position if scrolling happens while hovering
+document.addEventListener('wheel', (e) => {
+    document.querySelectorAll('.group\\/menu div[class*="absolute"]').forEach(dropdown => {
+        if (dropdown.style.position === 'fixed' && window.getComputedStyle(dropdown).opacity !== '0') {
+            const menuContainer = dropdown.closest('.group\\/menu');
+            if(menuContainer){
+                const rect = menuContainer.getBoundingClientRect();
+                dropdown.style.left = (rect.right - 144) + 'px';
+                if (rect.bottom + 150 > window.innerHeight) {
+                    dropdown.style.top = 'auto';
+                    dropdown.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+                } else {
+                    dropdown.style.bottom = 'auto';
+                    dropdown.style.top = (rect.bottom + 4) + 'px';
+                }
+            }
+        }
+    });
+}, {passive: true});
