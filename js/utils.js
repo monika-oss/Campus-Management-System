@@ -1057,17 +1057,27 @@ document.addEventListener('click', (e) => {
                 
                 // Escape overflow hidden container
                 menu.style.position = 'fixed';
+                menu.style.top = '0px';
+                menu.style.left = '0px';
+                const cbRect = menu.getBoundingClientRect();
                 const rect = btn.getBoundingClientRect();
                 
-                // Determine if it should drop up or down
+                let targetTop = rect.bottom + 4;
+                let targetLeft = rect.left;
+                
                 if (rect.bottom + 250 > window.innerHeight) {
                     menu.style.top = 'auto';
-                    menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
-                } else {
-                    menu.style.bottom = 'auto';
-                    menu.style.top = (rect.bottom + 4) + 'px';
+                    // bottom offset is calculated from the bottom of the viewport
+                    menu.style.bottom = (window.innerHeight - rect.top + 4 - (window.innerHeight - cbRect.bottom)) + 'px';
+                    // Actually, bottom offset for a containing block is tricky.
+                    // It's much easier to just calculate the exact TOP coordinate and use top!
+                    const menuHeight = menu.offsetHeight || 250; 
+                    targetTop = rect.top - menuHeight - 4;
                 }
-                menu.style.left = rect.left + 'px';
+                
+                menu.style.bottom = 'auto';
+                menu.style.top = (targetTop - cbRect.top) + 'px';
+                menu.style.left = (targetLeft - cbRect.left) + 'px';
                 menu.style.marginTop = '0';
                 
                 const input = menu.querySelector('input, select');
@@ -1200,22 +1210,28 @@ document.addEventListener('click', (e) => {
 });
 
 // Escape overflow hidden for Action menus
+// Escape overflow hidden for Action menus
 document.addEventListener('mouseover', (e) => {
-    const menuContainer = e.target.closest('.group\\/menu');
+    const menuContainer = e.target.closest('.group\/menu');
     if (menuContainer) {
         const dropdown = menuContainer.querySelector('div[class*="absolute"]');
-        if (dropdown && dropdown.style.position !== 'fixed') {
+        if (dropdown) {
             dropdown.style.position = 'fixed';
+            dropdown.style.top = '0px';
+            dropdown.style.left = '0px';
+            const cbRect = dropdown.getBoundingClientRect();
+            
             const rect = menuContainer.getBoundingClientRect();
-            // Check if it goes off bottom of screen
+            let targetTop = rect.bottom + 4;
+            
             if (rect.bottom + 150 > window.innerHeight) {
-                dropdown.style.top = 'auto';
-                dropdown.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
-            } else {
-                dropdown.style.bottom = 'auto';
-                dropdown.style.top = (rect.bottom + 4) + 'px';
+                const dropHeight = dropdown.offsetHeight || 130;
+                targetTop = rect.top - dropHeight - 4;
             }
-            dropdown.style.left = (rect.right - 144) + 'px'; 
+            
+            dropdown.style.bottom = 'auto';
+            dropdown.style.top = (targetTop - cbRect.top) + 'px';
+            dropdown.style.left = (rect.right - 144 - cbRect.left) + 'px'; 
             dropdown.style.marginTop = '0';
         }
     }
@@ -1223,20 +1239,13 @@ document.addEventListener('mouseover', (e) => {
 
 // Update position if scrolling happens while hovering
 document.addEventListener('wheel', (e) => {
-    document.querySelectorAll('.group\\/menu div[class*="absolute"]').forEach(dropdown => {
+    document.querySelectorAll('.group\/menu div[class*="absolute"]').forEach(dropdown => {
         if (dropdown.style.position === 'fixed' && window.getComputedStyle(dropdown).opacity !== '0') {
-            const menuContainer = dropdown.closest('.group\\/menu');
-            if(menuContainer){
-                const rect = menuContainer.getBoundingClientRect();
-                dropdown.style.left = (rect.right - 144) + 'px';
-                if (rect.bottom + 150 > window.innerHeight) {
-                    dropdown.style.top = 'auto';
-                    dropdown.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
-                } else {
-                    dropdown.style.bottom = 'auto';
-                    dropdown.style.top = (rect.bottom + 4) + 'px';
-                }
-            }
+            // just reset it so it disappears or moves with scroll
+            dropdown.style.position = 'absolute';
+            dropdown.style.top = 'auto';
+            dropdown.style.left = 'auto';
+            dropdown.style.bottom = 'auto';
         }
     });
 }, {passive: true});
@@ -1248,15 +1257,13 @@ document.addEventListener('wheel', (e) => {
         if (!menu.classList.contains('hidden') && menu.style.position === 'fixed') {
             const btn = menu.previousElementSibling;
             if (btn) {
-                const rect = btn.getBoundingClientRect();
-                menu.style.left = rect.left + 'px';
-                if (rect.bottom + 250 > window.innerHeight) {
-                    menu.style.top = 'auto';
-                    menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
-                } else {
-                    menu.style.bottom = 'auto';
-                    menu.style.top = (rect.bottom + 4) + 'px';
-                }
+                const cbRectTop = parseFloat(menu.dataset.cbTop || 0);
+                const cbRectLeft = parseFloat(menu.dataset.cbLeft || 0);
+                // We must recalculate the containing block offset if we scroll!
+                // Actually, the simplest way to keep it attached during scroll is to recalculate cbRect.
+                // But during wheel, it's expensive. Let's just hide the menu on scroll!
+                menu.classList.add('hidden');
+                menu.parentElement.classList.remove('z-50');
             }
         }
     });
