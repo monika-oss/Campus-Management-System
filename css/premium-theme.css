@@ -626,4 +626,14 @@ input[value="onduty"]:checked + .radio-btn { background: var(--accent-primary); 
 /* Hide y-scroll on tables */
 .overflow-x-auto {
     overflow-y: hidden !important;
+    /* Extend clipping boundary so fixed/absolute popups don't get cut off at the bottom */
+    padding-bottom: 160px !important;
+    margin-bottom: -160px !important;
+    /* Ensure the padding doesn't block pointer events for elements below (like pagination) */
+    pointer-events: none;
+}
+
+/* Re-enable pointer events for the actual table content */
+.overflow-x-auto > * {
+    pointer-events: auto;
 }
