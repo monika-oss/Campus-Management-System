@@ -278,9 +278,18 @@
                     
                     const students = await api.get(url);
                     
-                    const existingAttendanceUrl = `/attendance/?subject=${subjSelect.value}&date=${date}&period_number=${period}`;
-                    const existingAttendance = await api.get(existingAttendanceUrl);
-                    const isSubmitted = existingAttendance.length > 0;
+                    let existingAttendance = [];
+                    let isSubmitted = false;
+                    try {
+                        let existingAttendanceUrl = `/attendance/?subject=${subjSelect.value}&date=${date}`;
+                        if (period && period !== 'undefined' && period !== 'null') {
+                            existingAttendanceUrl += `&period_number=${period}`;
+                        }
+                        existingAttendance = await api.get(existingAttendanceUrl);
+                        isSubmitted = existingAttendance.length > 0;
+                    } catch (attErr) {
+                        console.error('Failed to fetch existing attendance:', attErr);
+                    }
                     
                     const list = document.getElementById('studentsList');
                     currentStudents = students;
