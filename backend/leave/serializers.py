@@ -14,7 +14,8 @@ class LeaveRequestSerializer(serializers.ModelSerializer):
 class LeaveRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ('leave_type', 'from_date', 'to_date', 'reason', 'is_partial_day', 'from_period', 'to_period')
+        fields = ('leave_id', 'leave_type', 'from_date', 'to_date', 'reason', 'is_partial_day', 'from_period', 'to_period', 'status', 'student')
+        read_only_fields = ('leave_id', 'status', 'student')
         
 class LeaveRequestUpdateSerializer(serializers.ModelSerializer):
     class Meta:

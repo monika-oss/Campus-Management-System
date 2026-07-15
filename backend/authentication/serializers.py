@@ -37,7 +37,22 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
         
         if email and password:
-            user = authenticate(request=self.context.get('request'), email=email, password=password)
+            # Resolve email from Faculty or Student profiles if direct User not found
+            resolved_email = email
+            from authentication.models import User
+            if not User.objects.filter(email=email).exists():
+                from faculty.models import Faculty
+                from students.models import Student
+                
+                faculty_profile = Faculty.objects.filter(email=email).first()
+                if faculty_profile and faculty_profile.user:
+                    resolved_email = faculty_profile.user.email
+                else:
+                    student_profile = Student.objects.filter(email=email).first()
+                    if student_profile and student_profile.user:
+                        resolved_email = student_profile.user.email
+
+            user = authenticate(request=self.context.get('request'), email=resolved_email, password=password)
             if not user:
                 raise serializers.ValidationError("Invalid email or password.")
             if not user.is_active:

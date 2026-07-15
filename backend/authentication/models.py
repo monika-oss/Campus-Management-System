@@ -43,3 +43,24 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.email} ({self.role})"
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if not is_new:
+            # Sync to Faculty profile if exists
+            if hasattr(self, 'faculty_profile') and self.faculty_profile:
+                profile = self.faculty_profile
+                if profile.email != self.email or profile.name != self.name:
+                    profile.email = self.email
+                    profile.name = self.name
+                    from faculty.models import Faculty
+                    super(Faculty, profile).save()
+            # Sync to Student profile if exists
+            if hasattr(self, 'student_profile') and self.student_profile:
+                profile = self.student_profile
+                if profile.email != self.email or profile.name != self.name:
+                    profile.email = self.email
+                    profile.name = self.name
+                    from students.models import Student
+                    super(Student, profile).save()

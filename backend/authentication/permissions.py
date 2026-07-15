@@ -30,4 +30,9 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return obj.student.user == request.user
         if hasattr(obj, 'faculty'):
             return obj.faculty.user == request.user
+        # For Notification model objects
+        if hasattr(obj, 'target_role'):
+            if obj.target_user:
+                return obj.target_user == request.user
+            return obj.target_role == 'all' or obj.target_role == request.user.role
         return False

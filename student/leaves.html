@@ -100,7 +100,19 @@
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 lg:py-8" id="mainDashboard">
-                <div class="max-w-5xl w-full mx-auto space-y-4">
+                <div class="max-w-5xl w-full mx-auto space-y-6">
+                    
+                    <!-- Header with Apply button -->
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 font-outfit">Leave Applications</h3>
+                            <p class="text-xs text-slate-500">View status and submit new leave requests.</p>
+                        </div>
+                        <button onclick="openModal()" class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 transition-all text-sm">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Apply Leave
+                        </button>
+                    </div>
+
                     <div id="leaveCards">
                         <p class="text-center py-10 text-slate-400 text-sm">Loading your leaves...</p>
                     </div>
@@ -282,12 +294,15 @@
                 const container = document.getElementById('leaveCards');
                 if (data.length === 0) {
                     container.innerHTML = `
-                        <div class="text-center py-16">
-                            <div class="w-16 h-16 mx-auto bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
+                        <div class="text-center py-16 flex flex-col items-center justify-center">
+                            <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
                                 <i data-lucide="clipboard-list" class="w-8 h-8 text-slate-400"></i>
                             </div>
                             <p class="text-slate-500 font-medium">No leave applications yet</p>
-                            <p class="text-slate-400 text-sm mt-1">Click "Apply Leave" to submit your first request</p>
+                            <p class="text-slate-400 text-sm mt-1 mb-5">Click "Apply Leave" to submit your first request</p>
+                            <button onclick="openModal()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-500/20 transition-all text-sm">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Apply Leave
+                            </button>
                         </div>
                     `;
                     if(window.lucide) lucide.createIcons();
