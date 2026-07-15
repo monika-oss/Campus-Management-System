@@ -1001,7 +1001,7 @@ document.addEventListener('click', (e) => {
         if (!isActionBtn || menu.previousElementSibling !== btn) {
             menu.classList.remove('opacity-100', 'visible', 'scale-100');
             menu.classList.add('opacity-0', 'invisible', 'scale-95');
-            if (menu.parentElement) menu.parentElement.classList.remove('z-50');
+            if (menu.parentElement) menu.parentElement.classList.remove('z-50'); menu.parentElement.style.zIndex = '';
         }
     });
 
@@ -1013,12 +1013,12 @@ document.addEventListener('click', (e) => {
                 // Open it
                 menu.classList.remove('opacity-0', 'invisible', 'scale-95');
                 menu.classList.add('opacity-100', 'visible', 'scale-100');
-                if (menu.parentElement) menu.parentElement.classList.add('z-50');
+                if (menu.parentElement) menu.parentElement.classList.add('z-50'); menu.parentElement.style.zIndex = '50';
             } else {
                 // Close it
                 menu.classList.add('opacity-0', 'invisible', 'scale-95');
                 menu.classList.remove('opacity-100', 'visible', 'scale-100');
-                if (menu.parentElement) menu.parentElement.classList.remove('z-50');
+                if (menu.parentElement) menu.parentElement.classList.remove('z-50'); menu.parentElement.style.zIndex = '';
             }
         }
     }
@@ -1045,7 +1045,7 @@ document.addEventListener('click', (e) => {
     document.querySelectorAll('.filter-popover-content').forEach(menu => {
         if (!btn || menu.previousElementSibling !== btn) {
             menu.classList.add('hidden');
-            menu.parentElement.classList.remove('z-50');
+            menu.parentElement.classList.remove('z-50'); menu.parentElement.style.zIndex = '';
         }
     });
     if (btn) {
@@ -1053,7 +1053,7 @@ document.addEventListener('click', (e) => {
         if (menu && menu.classList.contains('filter-popover-content')) {
             menu.classList.toggle('hidden');
             if (!menu.classList.contains('hidden')) {
-                menu.parentElement.classList.add('z-50');
+                menu.parentElement.classList.add('z-50'); menu.parentElement.style.zIndex = '50';
                 
                 // Escape overflow hidden container
                 menu.style.position = 'fixed';
@@ -1083,7 +1083,7 @@ document.addEventListener('click', (e) => {
                 const input = menu.querySelector('input, select');
                 if (input) setTimeout(() => input.focus(), 10);
             } else {
-                menu.parentElement.classList.remove('z-50');
+                menu.parentElement.classList.remove('z-50'); menu.parentElement.style.zIndex = '';
             }
         }
     }
@@ -1263,7 +1263,7 @@ document.addEventListener('wheel', (e) => {
                 // Actually, the simplest way to keep it attached during scroll is to recalculate cbRect.
                 // But during wheel, it's expensive. Let's just hide the menu on scroll!
                 menu.classList.add('hidden');
-                menu.parentElement.classList.remove('z-50');
+                menu.parentElement.classList.remove('z-50'); menu.parentElement.style.zIndex = '';
             }
         }
     });
