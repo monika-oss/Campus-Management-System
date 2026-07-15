@@ -1054,6 +1054,22 @@ document.addEventListener('click', (e) => {
             menu.classList.toggle('hidden');
             if (!menu.classList.contains('hidden')) {
                 menu.parentElement.classList.add('z-50');
+                
+                // Escape overflow hidden container
+                menu.style.position = 'fixed';
+                const rect = btn.getBoundingClientRect();
+                
+                // Determine if it should drop up or down
+                if (rect.bottom + 250 > window.innerHeight) {
+                    menu.style.top = 'auto';
+                    menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+                } else {
+                    menu.style.bottom = 'auto';
+                    menu.style.top = (rect.bottom + 4) + 'px';
+                }
+                menu.style.left = rect.left + 'px';
+                menu.style.marginTop = '0';
+                
                 const input = menu.querySelector('input, select');
                 if (input) setTimeout(() => input.focus(), 10);
             } else {
@@ -1219,6 +1235,27 @@ document.addEventListener('wheel', (e) => {
                 } else {
                     dropdown.style.bottom = 'auto';
                     dropdown.style.top = (rect.bottom + 4) + 'px';
+                }
+            }
+        }
+    });
+}, {passive: true});
+
+
+// Update position if scrolling happens while filter popover is open
+document.addEventListener('wheel', (e) => {
+    document.querySelectorAll('.filter-popover-content').forEach(menu => {
+        if (!menu.classList.contains('hidden') && menu.style.position === 'fixed') {
+            const btn = menu.previousElementSibling;
+            if (btn) {
+                const rect = btn.getBoundingClientRect();
+                menu.style.left = rect.left + 'px';
+                if (rect.bottom + 250 > window.innerHeight) {
+                    menu.style.top = 'auto';
+                    menu.style.bottom = (window.innerHeight - rect.top + 4) + 'px';
+                } else {
+                    menu.style.bottom = 'auto';
+                    menu.style.top = (rect.bottom + 4) + 'px';
                 }
             }
         }
