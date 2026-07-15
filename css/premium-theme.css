@@ -618,6 +618,6 @@ input[value="onduty"]:checked + .radio-btn { background: var(--accent-primary); 
 
 .overflow-x-auto {
     overflow-x: auto !important;
-    overflow-y: visible !important;
+    
     position: relative;
 }
