@@ -306,19 +306,19 @@
                                         </div>
                                         <div class="flex gap-2">
                                             <label class="att-radio">
-                                                <input type="radio" name="att_${s.id}" value="present" ${pChecked}>
+                                                <input type="radio" name="att_${s.student_id}" value="present" ${pChecked}>
                                                 <div class="radio-btn">P</div>
                                             </label>
                                             <label class="att-radio">
-                                                <input type="radio" name="att_${s.id}" value="absent" ${aChecked}>
+                                                <input type="radio" name="att_${s.student_id}" value="absent" ${aChecked}>
                                                 <div class="radio-btn">A</div>
                                             </label>
                                             <label class="att-radio">
-                                                <input type="radio" name="att_${s.id}" value="leave" ${lChecked}>
+                                                <input type="radio" name="att_${s.student_id}" value="leave" ${lChecked}>
                                                 <div class="radio-btn">L</div>
                                             </label>
                                             <label class="att-radio">
-                                                <input type="radio" name="att_${s.id}" value="on_duty" ${odChecked}>
+                                                <input type="radio" name="att_${s.student_id}" value="on_duty" ${odChecked}>
                                                 <div class="radio-btn">OD</div>
                                             </label>
                                         </div>
@@ -349,9 +349,9 @@
                 const attendances = [];
                 let hasError = false;
                 currentStudents.forEach(s => {
-                    const checkedRadio = document.querySelector(`input[name="att_${s.id}"]:checked`);
+                    const checkedRadio = document.querySelector(`input[name="att_${s.student_id}"]:checked`);
                     if (checkedRadio) {
-                        attendances.push({ student_id: s.id, status: checkedRadio.value });
+                        attendances.push({ student_id: s.student_id, status: checkedRadio.value });
                     } else {
                         hasError = true;
                     }
