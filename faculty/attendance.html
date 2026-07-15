@@ -278,6 +278,10 @@
                     
                     const students = await api.get(url);
                     
+                    const existingAttendanceUrl = `/attendance/?subject=${subjSelect.value}&date=${date}&period_number=${period}`;
+                    const existingAttendance = await api.get(existingAttendanceUrl);
+                    const isSubmitted = existingAttendance.length > 0;
+                    
                     const list = document.getElementById('studentsList');
                     currentStudents = students;
                     
@@ -287,11 +291,16 @@
                         } else {
                             let html = '';
                             studentsToRender.forEach(s => {
-                                // Default to present
-                                const pChecked = 'checked';
-                                const aChecked = '';
-                                const lChecked = '';
-                                const odChecked = '';
+                                const att = existingAttendance.find(a => a.student_details && a.student_details.student_id === s.student_id);
+                                const status = att ? att.status : 'present';
+
+                                const pChecked = status === 'present' ? 'checked' : '';
+                                const aChecked = status === 'absent' ? 'checked' : '';
+                                const lChecked = status === 'leave' ? 'checked' : '';
+                                const odChecked = status === 'on_duty' ? 'checked' : '';
+                                
+                                const disabledAttr = isSubmitted ? 'disabled' : '';
+                                const labelClass = isSubmitted ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer';
 
                                 html += `
                                     <div class="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors student-row" data-name="${s.name.toLowerCase()}" data-roll="${s.roll_number.toLowerCase()}">
@@ -305,20 +314,20 @@
                                             </div>
                                         </div>
                                         <div class="flex gap-2">
-                                            <label class="att-radio">
-                                                <input type="radio" name="att_${s.student_id}" value="present" ${pChecked}>
+                                            <label class="att-radio ${labelClass}">
+                                                <input type="radio" name="att_${s.student_id}" value="present" ${pChecked} ${disabledAttr}>
                                                 <div class="radio-btn">P</div>
                                             </label>
-                                            <label class="att-radio">
-                                                <input type="radio" name="att_${s.student_id}" value="absent" ${aChecked}>
+                                            <label class="att-radio ${labelClass}">
+                                                <input type="radio" name="att_${s.student_id}" value="absent" ${aChecked} ${disabledAttr}>
                                                 <div class="radio-btn">A</div>
                                             </label>
-                                            <label class="att-radio">
-                                                <input type="radio" name="att_${s.student_id}" value="leave" ${lChecked}>
+                                            <label class="att-radio ${labelClass}">
+                                                <input type="radio" name="att_${s.student_id}" value="leave" ${lChecked} ${disabledAttr}>
                                                 <div class="radio-btn">L</div>
                                             </label>
-                                            <label class="att-radio">
-                                                <input type="radio" name="att_${s.student_id}" value="on_duty" ${odChecked}>
+                                            <label class="att-radio ${labelClass}">
+                                                <input type="radio" name="att_${s.student_id}" value="on_duty" ${odChecked} ${disabledAttr}>
                                                 <div class="radio-btn">OD</div>
                                             </label>
                                         </div>
@@ -326,6 +335,32 @@
                                 `;
                             });
                             list.innerHTML = html;
+
+                            const submitBtn = document.querySelector('#attendanceSubmitForm button[type="submit"]');
+                            const markPresentBtn = document.querySelector('button[onclick="markAll(\'present\')"]');
+                            const markAbsentBtn = document.querySelector('button[onclick="markAll(\'absent\')"]');
+                            
+                            if (isSubmitted) {
+                                submitBtn.disabled = true;
+                                submitBtn.textContent = 'Attendance Already Marked';
+                                submitBtn.classList.replace('bg-blue-600', 'bg-slate-400');
+                                submitBtn.classList.remove('hover:bg-blue-700');
+                                
+                                markPresentBtn.disabled = true;
+                                markPresentBtn.classList.add('opacity-50', 'pointer-events-none');
+                                markAbsentBtn.disabled = true;
+                                markAbsentBtn.classList.add('opacity-50', 'pointer-events-none');
+                            } else {
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = 'Submit Attendance';
+                                submitBtn.classList.replace('bg-slate-400', 'bg-blue-600');
+                                submitBtn.classList.add('hover:bg-blue-700');
+                                
+                                markPresentBtn.disabled = false;
+                                markPresentBtn.classList.remove('opacity-50', 'pointer-events-none');
+                                markAbsentBtn.disabled = false;
+                                markAbsentBtn.classList.remove('opacity-50', 'pointer-events-none');
+                            }
                         }
                     };
 
