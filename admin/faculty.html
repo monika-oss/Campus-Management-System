@@ -277,8 +277,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-700 font-semibold mb-1 text-sm">Designation</label>
-                        <input type="text" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none" id="f_desig" placeholder="e.g. Assistant Professor">
+                        <label class="block text-slate-700 font-semibold mb-1 text-sm">Designation*</label>
+                        <select class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none" id="f_desig" required>
+                            <option value="">Select Designation</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Professor">Professor</option>
+                            <option value="HOD">Head of Department</option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -316,8 +322,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-700 font-semibold mb-1 text-sm">Designation</label>
-                        <input type="text" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none" id="ef_desig">
+                        <label class="block text-slate-700 font-semibold mb-1 text-sm">Designation*</label>
+                        <select class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none" id="ef_desig" required>
+                            <option value="">Select Designation</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Professor">Professor</option>
+                            <option value="HOD">Head of Department</option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -443,7 +455,7 @@
                     designation: document.getElementById('f_desig').value,
                 };
 
-                if(!data.name || !data.email || !data.department) {
+                if(!data.name || !data.email || !data.department || !data.designation) {
                     utils.showToast("Required fields are missing", "error");
                     return;
                 }
