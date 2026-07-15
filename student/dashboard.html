@@ -110,51 +110,51 @@
                     </div>
 
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                                    <i data-lucide="percent" class="w-4 h-4 shrink-0 text-blue-600"></i>
-                                </div>
-                                <p class="text-sm font-medium text-slate-500 leading-tight">Overall<br>Attendance</p>
+                    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                                <i data-lucide="percent" class="w-6 h-6 text-blue-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800" id="kpi-attendance">—</p>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500 leading-tight">Attendance</p>
+                                <p class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" id="kpi-attendance">—</p>
+                            </div>
                         </div>
-                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-                                    <i data-lucide="check-circle" class="w-4 h-4 shrink-0 text-green-600"></i>
-                                </div>
-                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>Present</p>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800" id="kpi-present">—</p>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500 leading-tight">Present</p>
+                                <p class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" id="kpi-present">—</p>
+                            </div>
                         </div>
-                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center">
-                                    <i data-lucide="x-circle" class="w-4 h-4 shrink-0 text-rose-600"></i>
-                                </div>
-                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>Absent</p>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                                <i data-lucide="x-circle" class="w-6 h-6 text-rose-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800" id="kpi-absent">—</p>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500 leading-tight">Absent</p>
+                                <p class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" id="kpi-absent">—</p>
+                            </div>
                         </div>
-                        <div class="stat-card bg-white rounded-xl border border-amber-200 bg-amber-50/20 shadow-sm p-5 flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                                    <i data-lucide="calendar-off" class="w-4 h-4 shrink-0 text-amber-600"></i>
-                                </div>
-                                <p class="text-sm font-medium text-slate-500 leading-tight">Classes<br>on Leave</p>
+                        <div class="stat-card bg-white rounded-xl border border-amber-200 bg-amber-50/20 shadow-sm p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="calendar-off" class="w-6 h-6 text-amber-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800" id="kpi-leave">—</p>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500 leading-tight">On Leave</p>
+                                <p class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" id="kpi-leave">—</p>
+                            </div>
                         </div>
-                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex flex-col gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                                    <i data-lucide="clipboard-list" class="w-4 h-4 shrink-0 text-slate-600"></i>
-                                </div>
-                                <p class="text-sm font-medium text-slate-500 leading-tight">Pending<br>Leaves</p>
+                        <div class="stat-card bg-white rounded-xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
+                                <i data-lucide="clipboard-list" class="w-6 h-6 text-slate-600"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800" id="kpi-leaves">—</p>
+                            <div>
+                                <p class="text-xs sm:text-sm font-medium text-slate-500 leading-tight">Pending</p>
+                                <p class="text-xl sm:text-2xl font-bold text-slate-800 mt-1" id="kpi-leaves">—</p>
+                            </div>
                         </div>
                     </div>
 
