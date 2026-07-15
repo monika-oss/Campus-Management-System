@@ -124,9 +124,10 @@
                                         <div class="filter-popover-content absolute hidden top-full mt-1 left-0 bg-white border border-slate-200 shadow-xl p-2 rounded-lg z-10 w-48 font-normal normal-case text-slate-800">
                                             <select id="statusFilter" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none transition-all text-xs font-normal normal-case">
                                                 <option value="">All</option>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Approved">Approved</option>
-                                                <option value="Rejected">Rejected</option>
+                                                <option value="pending_advisor">Pending Advisor</option>
+                                                <option value="pending_hod">Pending HOD</option>
+                                                <option value="approved">Approved</option>
+                                                <option value="rejected">Rejected</option>
                                             </select>
                                         </div>
                                     </th>
@@ -186,30 +187,39 @@
                 }
                 const data = await api.get(url);
                 const tbody = document.querySelector('#leavesTable tbody');
-                const pending = data.filter(l => l.status === 'pending').length;
+                const pending = data.filter(l => l.status === 'pending_advisor' || l.status === 'pending_hod').length;
                 document.getElementById('leaveCount').textContent = pending + ' Pending';
                 
                 if (data.length) {
-                    tbody.innerHTML = data.map(l => `
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="py-3.5 px-4 font-semibold text-slate-800">${l.student_details?.name || '—'}</td>
-                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded border border-slate-200 uppercase">${l.leave_type}</span></td>
-                            <td class="py-3.5 px-4">${l.from_date}</td>
-                            <td class="py-3.5 px-4">${l.to_date}</td>
-                            <td class="py-3.5 px-4 max-w-xs truncate">${l.reason}</td>
-                            <td class="py-3.5 px-4">
-                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${l.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : l.status === 'rejected' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${l.status}</span>
-                            </td>
-                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                                ${l.status === 'pending' ? `
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <button class="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 hover:border-emerald-600 text-emerald-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'approve')"><i data-lucide="check" class="w-3.5 h-3.5"></i> Approve</button>
-                                        <button class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 text-rose-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'reject')"><i data-lucide="x" class="w-3.5 h-3.5"></i> Reject</button>
-                                    </div>
-                                ` : '<span class="text-slate-400">—</span>'}
-                            </td>
-                        </tr>
-                    `).join('');
+                    tbody.innerHTML = data.map(l => {
+                        const isHOD = user.designation === 'HOD';
+                        const canApprove = l.status === 'pending_advisor' || (l.status === 'pending_hod' && isHOD);
+                        
+                        let statusText = l.status;
+                        if (l.status === 'pending_advisor') statusText = 'Pending Advisor';
+                        if (l.status === 'pending_hod') statusText = 'Pending HOD';
+                        
+                        return `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3.5 px-4 font-semibold text-slate-800">${l.student_details?.name || '—'}</td>
+                                <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded border border-slate-200 uppercase">${l.leave_type}</span></td>
+                                <td class="py-3.5 px-4">${l.from_date}</td>
+                                <td class="py-3.5 px-4">${l.to_date}</td>
+                                <td class="py-3.5 px-4 max-w-xs truncate">${l.reason}</td>
+                                <td class="py-3.5 px-4">
+                                    <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${l.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : l.status === 'rejected' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${statusText}</span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center whitespace-nowrap">
+                                    ${canApprove ? `
+                                        <div class="flex items-center justify-center gap-1.5">
+                                            <button class="flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-600 border border-emerald-200 hover:border-emerald-600 text-emerald-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'approve')"><i data-lucide="check" class="w-3.5 h-3.5"></i> Approve</button>
+                                            <button class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 hover:bg-rose-600 border border-rose-200 hover:border-rose-600 text-rose-700 hover:text-white rounded text-xs transition-colors font-medium" onclick="updateLeave(${l.leave_id}, 'reject')"><i data-lucide="x" class="w-3.5 h-3.5"></i> Reject</button>
+                                        </div>
+                                    ` : '<span class="text-slate-400">—</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
                     if(window.lucide) lucide.createIcons();
                 } else {
                     tbody.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-slate-400">No leave requests found.</td></tr>';
