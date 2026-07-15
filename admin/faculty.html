@@ -576,7 +576,7 @@
                 designation: document.getElementById('ef_desig').value,
             };
             try {
-                await api.put('/faculty/' + id + '/', data);
+                await api.patch('/faculty/' + id + '/', data);
                 utils.showToast('Faculty updated successfully', 'success');
                 utils.hideModal('editFacultyModal');
                 loadFaculty();

@@ -574,7 +574,7 @@
                 year: document.getElementById('e_year').value,
             };
             try {
-                await api.put('/students/' + id + '/', data);
+                await api.patch('/students/' + id + '/', data);
                 utils.showToast('Student updated successfully', 'success');
                 utils.hideModal('editStudentModal');
                 loadStudents();
