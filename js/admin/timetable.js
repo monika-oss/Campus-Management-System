@@ -1,4 +1,7 @@
 // Admin Timetable Logic
+let timetableCurrentPage = 1;
+const ITEMS_PER_PAGE = 5;
+
 document.addEventListener('DOMContentLoaded', async () => {
     lucide.createIcons();
     if (!auth.checkAuth() || !auth.hasRole('admin')) return;
@@ -109,10 +112,15 @@ async function loadTimetable() {
         tbody.innerHTML = '';
         if (timetableList.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-500">No timetable entries found.</td></tr>`;
+            const pg = document.getElementById('timetablePagination');
+            if (pg) pg.innerHTML = '';
             return;
         }
 
-        timetableList.forEach(tt => {
+        const startIndex = (timetableCurrentPage - 1) * ITEMS_PER_PAGE;
+        const paginatedData = timetableList.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        paginatedData.forEach(tt => {
             tbody.innerHTML += `
                 <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="py-4 px-6 text-slate-700 font-medium whitespace-nowrap">${tt.day_of_week}</td>
@@ -134,6 +142,11 @@ async function loadTimetable() {
                     </td>
                 </tr>
             `;
+        });
+        
+        utils.renderPagination('timetablePagination', timetableList.length, ITEMS_PER_PAGE, timetableCurrentPage, (newPage) => {
+            timetableCurrentPage = newPage;
+            loadTimetable();
         });
         
         if (window.lucide) {
