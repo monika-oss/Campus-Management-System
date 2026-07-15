@@ -180,7 +180,11 @@
             const sidebar = document.getElementById('facultySidebar');
             const toggleBtn = document.getElementById('sidebarToggle');
             if (sidebar && toggleBtn) {
-                toggleBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed-sidebar'));
+                toggleBtn.addEventListener('click', () => {
+                    if (window.innerWidth >= 1024) {
+                        sidebar.classList.toggle('collapsed-sidebar');
+                    }
+                });
             }
 
             // Load stats
