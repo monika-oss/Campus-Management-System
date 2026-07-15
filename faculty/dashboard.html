@@ -196,14 +196,14 @@
                     } else {
                         container.innerHTML = classes.map(c => `
                             <div class="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors">
-                                <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">P${c.period_number}</div>
-                                    <div>
-                                        <p class="font-semibold text-slate-800">${c.subject_details ? c.subject_details.subject_name : 'Subject '+c.subject}</p>
-                                        <p class="text-xs text-slate-400">Year ${c.year} · Section ${c.section}</p>
+                                <div class="flex items-center gap-2 sm:gap-4 min-w-0 w-full sm:w-auto overflow-hidden">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm flex-shrink-0">P${c.period_number}</div>
+                                    <div class="min-w-0 overflow-hidden">
+                                        <p class="font-semibold text-slate-800 truncate">${c.subject_details ? c.subject_details.subject_name : 'Subject '+c.subject}</p>
+                                        <p class="text-xs text-slate-400 truncate">Year ${c.year} · Section ${c.section}</p>
                                     </div>
                                 </div>
-                                <a href="attendance.html" class="px-4 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">Mark Attendance</a>
+                                <a href="attendance.html" class="whitespace-nowrap flex-shrink-0 px-4 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">Mark Attendance</a>
                             </div>
                         `).join('');
                     }
