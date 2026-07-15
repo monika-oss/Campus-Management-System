@@ -621,3 +621,9 @@ input[value="onduty"]:checked + .radio-btn { background: var(--accent-primary); 
     
     position: relative;
 }
+
+
+/* Hide y-scroll on tables */
+.overflow-x-auto {
+    overflow-y: hidden !important;
+}
