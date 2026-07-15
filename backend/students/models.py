@@ -63,6 +63,13 @@ class Student(models.Model):
 
         super().save(*args, **kwargs)
 
+
+    def delete(self, *args, **kwargs):
+        user_to_delete = self.user
+        super().delete(*args, **kwargs)
+        if user_to_delete:
+            user_to_delete.delete()
+
     def __str__(self):
         return f"{self.roll_number} - {self.name}"
 
