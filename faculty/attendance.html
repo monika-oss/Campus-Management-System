@@ -282,23 +282,18 @@
                     currentStudents = students;
                     
                     window.renderStudentsList = function(studentsToRender) {
-                        list.innerHTML = '';
                         if (studentsToRender.length === 0) {
                             list.innerHTML = '<p class="text-center py-8 text-slate-400">No students found.</p>';
                         } else {
+                            let html = '';
                             studentsToRender.forEach(s => {
-                                // Preserve existing radio states if they exist
-                                const existingP = document.querySelector(`input[name="att_${s.id}"][value="present"]`)?.checked;
-                                const existingA = document.querySelector(`input[name="att_${s.id}"][value="absent"]`)?.checked;
-                                const existingL = document.querySelector(`input[name="att_${s.id}"][value="leave"]`)?.checked;
-                                const existingOD = document.querySelector(`input[name="att_${s.id}"][value="onduty"]`)?.checked;
-                                
-                                const pChecked = existingP ? 'checked' : (!existingA && !existingL && !existingOD ? 'checked' : '');
-                                const aChecked = existingA ? 'checked' : '';
-                                const lChecked = existingL ? 'checked' : '';
-                                const odChecked = existingOD ? 'checked' : '';
+                                // Default to present
+                                const pChecked = 'checked';
+                                const aChecked = '';
+                                const lChecked = '';
+                                const odChecked = '';
 
-                                list.innerHTML += `
+                                html += `
                                     <div class="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors student-row" data-name="${s.name.toLowerCase()}" data-roll="${s.roll_number.toLowerCase()}">
                                         <div class="flex items-center gap-2 sm:gap-4 min-w-0">
                                             <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
@@ -323,13 +318,14 @@
                                                 <div class="radio-btn">L</div>
                                             </label>
                                             <label class="att-radio">
-                                                <input type="radio" name="att_${s.id}" value="onduty" ${odChecked}>
+                                                <input type="radio" name="att_${s.id}" value="on_duty" ${odChecked}>
                                                 <div class="radio-btn">OD</div>
                                             </label>
                                         </div>
                                     </div>
                                 `;
                             });
+                            list.innerHTML = html;
                         }
                     };
 
@@ -351,10 +347,20 @@
                 const date = document.getElementById('attDate').value;
                 
                 const attendances = [];
+                let hasError = false;
                 currentStudents.forEach(s => {
-                    const status = document.querySelector(`input[name="att_${s.id}"]:checked`).value;
-                    attendances.push({ student_id: s.id, status: status });
+                    const checkedRadio = document.querySelector(`input[name="att_${s.id}"]:checked`);
+                    if (checkedRadio) {
+                        attendances.push({ student_id: s.id, status: checkedRadio.value });
+                    } else {
+                        hasError = true;
+                    }
                 });
+                
+                if (hasError) {
+                    utils.showToast('Please select attendance status for all students.', 'error');
+                    return;
+                }
                 
                 try {
                     await api.post('/attendance/mark/', {
