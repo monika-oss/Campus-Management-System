@@ -54,6 +54,12 @@ class Student(models.Model):
                     role='student'
                 )
                 self.user = new_user
+        else:
+            # Sync existing user
+            if self.user.email != self.email or self.user.name != self.name:
+                self.user.email = self.email
+                self.user.name = self.name
+                self.user.save()
 
         super().save(*args, **kwargs)
 
