@@ -186,13 +186,14 @@
                     url += '?' + params.join('&');
                 }
                 const data = await api.get(url);
+                const user = auth.getUser();
                 const tbody = document.querySelector('#leavesTable tbody');
                 const pending = data.filter(l => l.status === 'pending_advisor' || l.status === 'pending_hod').length;
                 document.getElementById('leaveCount').textContent = pending + ' Pending';
                 
                 if (data.length) {
                     tbody.innerHTML = data.map(l => {
-                        const isHOD = user.designation === 'HOD';
+                        const isHOD = user && user.designation === 'HOD';
                         const canApprove = l.status === 'pending_advisor' || (l.status === 'pending_hod' && isHOD);
                         
                         let statusText = l.status;
