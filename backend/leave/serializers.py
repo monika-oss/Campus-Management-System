@@ -20,7 +20,7 @@ class LeaveRequestCreateSerializer(serializers.ModelSerializer):
 class LeaveRequestUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ('status', 'reviewed_by', 'reviewed_at')
+        fields = ('status', 'advisor_reviewer', 'advisor_reviewed_at', 'advisor_remarks', 'hod_reviewer', 'hod_reviewed_at', 'hod_remarks')
 
 class FacultyODAssignmentSerializer(serializers.ModelSerializer):
     assigned_by_details = FacultySerializer(source='assigned_by', read_only=True)
