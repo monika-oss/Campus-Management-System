@@ -25,21 +25,22 @@ class Student(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.roll_number:
-            import datetime
-            year_str = str(datetime.datetime.now().year)
-            dept_code = self.department.code if self.department else "GEN"
-            prefix = f"REG{year_str}{dept_code}"
-            latest_student = Student.objects.filter(roll_number__startswith=prefix).order_by('-roll_number').first()
+        import datetime
+        year_str = str(datetime.datetime.now().year)
+        dept_code = self.department.code if self.department else "GEN"
+        expected_prefix = f"REG{year_str}{dept_code}"
+        
+        if not self.roll_number or not self.roll_number.startswith(expected_prefix):
+            latest_student = Student.objects.filter(roll_number__startswith=expected_prefix).order_by('-roll_number').first()
             if latest_student:
                 try:
-                    seq_str = latest_student.roll_number[len(prefix):]
+                    seq_str = latest_student.roll_number[len(expected_prefix):]
                     seq = int(seq_str) + 1
                 except ValueError:
                     seq = 1
             else:
                 seq = 1
-            self.roll_number = f"{prefix}{seq:03d}"
+            self.roll_number = f"{expected_prefix}{seq:03d}"
 
         if not self.user:
             from authentication.models import User
