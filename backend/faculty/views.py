@@ -65,27 +65,24 @@ class FacultyViewSet(viewsets.ModelViewSet):
             )
             
             # Find ODs for this date
-            ods = FacultyODAssignment.objects.filter(
-                date=date_str,
-                students__in=students
-            )
+            ods = FacultyODAssignment.objects.filter(date=date_str).prefetch_related('students')
             
             for student_data in data:
                 student_id = student_data['student_id']
                 
                 # Check for OD
                 is_od = False
-                student_ods = ods.filter(students__student_id=student_id)
-                for od in student_ods:
-                    if od.from_period and od.to_period and period_str:
-                        if od.from_period <= int(period_str) <= od.to_period:
+                for od in ods:
+                    if any(s.student_id == student_id for s in od.students.all()):
+                        if od.from_period and od.to_period and period_str:
+                            if od.from_period <= int(period_str) <= od.to_period:
+                                is_od = True
+                                break
+                        elif not od.from_period and not od.to_period:
+                            # Full day OD
                             is_od = True
                             break
-                    elif not od.from_period and not od.to_period:
-                        # Full day OD
-                        is_od = True
-                        break
-                        
+                            
                 if is_od:
                     student_data['auto_status'] = 'on_duty'
                     continue
