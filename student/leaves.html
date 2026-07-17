@@ -322,8 +322,8 @@
                                     <div class="text-sm text-slate-500 mt-0.5">
                                         <i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1 opacity-70"></i>
                                         ${l.is_partial_day ? 
-                                            `${new Date(l.from_date).toLocaleDateString()} (Periods ${l.from_period} to ${l.to_period})` :
-                                            `${new Date(l.from_date).toLocaleDateString()} to ${new Date(l.to_date).toLocaleDateString()}`
+                                            `${utils.formatDate(l.from_date)} (Periods ${l.from_period} to ${l.to_period})` :
+                                            `${utils.formatDate(l.from_date)} to ${utils.formatDate(l.to_date)}`
                                         }
                                     </div>
                                 <p class="text-sm text-slate-600 mt-1">${l.reason}</p>

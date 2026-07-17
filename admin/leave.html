@@ -264,8 +264,8 @@
                     <tr>
                         <td class="py-3.5 px-4 font-semibold text-slate-800">${l.student_details?.name}</td>
                         <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded border border-slate-200 uppercase">${l.leave_type}</span></td>
-                        <td class="py-3.5 px-4">${l.from_date}</td>
-                        <td class="py-3.5 px-4">${l.to_date}</td>
+                        <td class="py-3.5 px-4">${utils.formatDate(l.from_date)}</td>
+                        <td class="py-3.5 px-4">${utils.formatDate(l.to_date)}</td>
                         <td class="py-3.5 px-4">${l.reason}</td>
                         <td class="py-3.5 px-4">
                             <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${l.status === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : l.status === 'rejected' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">${l.status}</span>

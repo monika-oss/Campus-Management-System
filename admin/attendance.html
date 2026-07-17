@@ -260,7 +260,7 @@
             const paginated = utils.paginateData(attendanceData, attendanceCurrentPage, ITEMS_PER_PAGE);
             tbody.innerHTML = paginated.map(a => `
                 <tr>
-                    <td class="py-3.5 px-4 font-semibold text-slate-800">${a.date}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-800">${utils.formatDate(a.date)}</td>
                     <td class="py-3.5 px-4 font-medium">${a.student_details?.name || 'N/A'} <span class="text-xs text-slate-400 font-normal">(${a.student_details?.roll_number || ''})</span></td>
                     <td class="py-3.5 px-4">${a.subject_details?.subject_name || 'General Class'}</td>
                     <td class="py-3.5 px-4">
