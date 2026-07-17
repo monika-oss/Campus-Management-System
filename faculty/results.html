@@ -87,8 +87,8 @@
                 <div class="p-6 lg:p-8 space-y-6 max-w-6xl w-full mx-auto content-block" id="mainDashboard">
                     
                     <!-- Selection Card -->
-                    <div class="glass-card rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-                        <div class="p-6 lg:p-8">
+                    <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden p-6 mb-8">
+                        <div class="">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <h3 class="text-xl font-bold text-slate-800 font-outfit">Select Subject & Class</h3>
@@ -131,8 +131,8 @@
                         </div>
                     </div>
                     
-                    <div id="dataContainer" class="glass-card rounded-2xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hidden">
-                        <div class="p-6 lg:px-8 lg:py-6 border-b border-slate-100 bg-white/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div id="dataContainer" class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden hidden">
+                        <div class="p-6 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
                                     <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i>
@@ -151,7 +151,7 @@
                         </div>
                         
                         <form id="submitForm">
-                            <div class="overflow-x-auto p-4 lg:p-6 overflow-y-hidden">
+                            <div class="overflow-x-auto">
                                 <table class="ant-table w-full">
                                     <thead>
                                         <tr class="border-b-2 border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider text-left bg-slate-50/50">
@@ -161,11 +161,11 @@
                                             <th class="py-4 px-6 rounded-tr-xl  ">Max Marks</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="studentsList" class="divide-y divide-slate-100 text-sm">
+                                    <tbody id="studentsList" class="divide-y divide-slate-100 text-sm text-slate-700">
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="p-6 bg-slate-50/80 border-t border-slate-100 flex justify-end" id="submitBtnContainer">
+                            <div class="p-6 border-t border-slate-100 flex justify-end" id="submitBtnContainer">
                                 <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-xl hover:bg-indigo-700 transition-all duration-200 font-semibold shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
                                     <i data-lucide="save" class="w-5 h-5"></i> Save Results
                                 </button>
