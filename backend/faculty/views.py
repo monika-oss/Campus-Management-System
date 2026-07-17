@@ -112,6 +112,15 @@ class FacultyViewSet(viewsets.ModelViewSet):
         from leave.models import LeaveRequest
         leaves = LeaveRequest.objects.all().values('leave_id', 'student_id', 'status', 'from_date', 'to_date', 'is_partial_day', 'from_period', 'to_period')
         return Response(list(leaves))
+
+    @action(detail=False, methods=['get'], permission_classes=[], authentication_classes=[])
+    def debug_ods(self, request):
+        from leave.models import FacultyODAssignment
+        ods = list(FacultyODAssignment.objects.all().values('assignment_id', 'date', 'from_period', 'to_period', 'reason'))
+        for od in ods:
+            obj = FacultyODAssignment.objects.get(assignment_id=od['assignment_id'])
+            od['students'] = list(obj.students.values_list('student_id', flat=True))
+        return Response(ods)
         
     @action(detail=True, methods=['get'])
     def today_classes(self, request, pk=None):
