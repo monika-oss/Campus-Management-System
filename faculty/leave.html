@@ -100,9 +100,9 @@
             <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 lg:py-8" id="mainDashboard">
                 <div class="max-w-7xl w-full mx-auto">
                     <!-- Tabs -->
-                    <div class="flex gap-4 mb-6 border-b border-slate-200">
-                        <button onclick="switchTab('leaves')" id="tab-leaves" class="px-4 py-2 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors">Leave Requests</button>
-                        <button onclick="switchTab('od')" id="tab-od" class="px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 transition-colors">Assign OD</button>
+                    <div class="flex gap-2 mb-6 p-1.5 bg-slate-100/80 backdrop-blur-md rounded-xl border border-slate-200/60 w-max shadow-inner">
+                        <button onclick="switchTab('leaves')" id="tab-leaves" class="px-6 py-2 text-sm font-bold rounded-lg bg-white text-blue-700 shadow-sm ring-1 ring-slate-200/50 transition-all">Leave Requests</button>
+                        <button onclick="switchTab('od')" id="tab-od" class="px-6 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all">Assign OD</button>
                     </div>
 
                     <!-- Leaves Tab Content -->
@@ -311,8 +311,8 @@
                 document.getElementById('content-od').classList.remove('block');
                 document.getElementById('content-od').classList.add('hidden');
                 
-                document.getElementById('tab-leaves').className = "px-4 py-2 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors";
-                document.getElementById('tab-od').className = "px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 transition-colors";
+                document.getElementById('tab-leaves').className = "px-6 py-2 text-sm font-bold rounded-lg bg-white text-blue-700 shadow-sm ring-1 ring-slate-200/50 transition-all";
+                document.getElementById('tab-od').className = "px-6 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all";
                 
                 loadLeaves();
             } else {
@@ -321,8 +321,8 @@
                 document.getElementById('content-leaves').classList.remove('block');
                 document.getElementById('content-leaves').classList.add('hidden');
                 
-                document.getElementById('tab-od').className = "px-4 py-2 font-bold text-blue-600 border-b-2 border-blue-600 transition-colors";
-                document.getElementById('tab-leaves').className = "px-4 py-2 font-semibold text-slate-500 hover:text-slate-700 transition-colors";
+                document.getElementById('tab-od').className = "px-6 py-2 text-sm font-bold rounded-lg bg-white text-blue-700 shadow-sm ring-1 ring-slate-200/50 transition-all";
+                document.getElementById('tab-leaves').className = "px-6 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-700 hover:bg-white/50 transition-all";
                 
                 loadODs();
                 if(!document.getElementById('odDate').value) {
