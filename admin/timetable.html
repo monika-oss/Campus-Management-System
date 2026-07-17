@@ -304,8 +304,8 @@
     </div>
     
     <!-- Manage Subjects Modal -->
-    <div id="manageSubjectsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300" id="manageSubjectsModalContent">
+    <div id="manageSubjectsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center modal-overlay p-4" onclick="utils.hideModal('manageSubjectsModal')">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300 modal" id="manageSubjectsModalContent" onclick="event.stopPropagation()">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 class="text-lg font-bold text-slate-800">Manage Subjects</h3>
                 <button class="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200 rounded-lg" onclick="utils.hideModal('manageSubjectsModal')">
