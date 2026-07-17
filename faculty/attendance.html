@@ -65,7 +65,7 @@
         .att-radio input[type="radio"] { display: none; }
         .att-radio .radio-btn {
             display: flex; align-items: center; justify-content: center;
-            width: 36px; height: 36px; border-radius: 8px; font-weight: 600; font-size: 14px;
+            width: 42px; height: 42px; border-radius: 10px; font-weight: 700; font-size: 15px;
             cursor: pointer; transition: all 0.2s; border: 2px solid transparent;
         }
         .att-radio input[value="present"] + .radio-btn { background: #f0fdf4; color: #16a34a; border-color: #dcfce7; }
@@ -326,7 +326,7 @@
                                                 <p class="text-xs text-slate-500 truncate">${s.roll_number}</p>
                                             </div>
                                         </div>
-                                        <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end mt-1 sm:mt-0">
+                                        <div class="flex flex-wrap gap-4 sm:gap-3 w-full sm:w-auto justify-start sm:justify-end mt-2 sm:mt-0">
                                             <label class="att-radio ${labelClass}">
                                                 <input type="radio" name="att_${s.student_id}" value="present" ${pChecked} ${disabledAttr}>
                                                 <div class="radio-btn">P</div>
