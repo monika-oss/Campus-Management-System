@@ -106,14 +106,6 @@ class Timetable(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     faculty = models.ForeignKey('faculty.Faculty', on_delete=models.CASCADE)
     
-    CATEGORY_CHOICES = (
-        ('Theory', 'Theory'),
-        ('Lab', 'Lab'),
-        ('Practical', 'Practical'),
-        ('Seminar', 'Seminar'),
-    )
-    subject_category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Theory')
-    
     class Meta:
         unique_together = ('department', 'year', 'section', 'day_of_week', 'period_number')
         

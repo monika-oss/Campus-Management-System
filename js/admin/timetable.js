@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 start_time: document.getElementById('ttStartTime').value,
                 end_time: document.getElementById('ttEndTime').value,
                 subject: document.getElementById('ttSubject').value,
-                subject_category: document.getElementById('ttCategory').value,
                 faculty: document.getElementById('ttFaculty').value
             };
             
@@ -129,14 +128,11 @@ async function loadTimetable() {
                     <td class="py-4 px-6 text-slate-600 whitespace-nowrap"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap">${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'} - ${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}</span></td>
                     <td class="py-4 px-6 text-slate-600 whitespace-nowrap">Yr ${tt.year}</td>
                     <td class="py-4 px-6 text-slate-600 font-semibold whitespace-nowrap">${tt.department}</td>
-                    <td class="py-4 px-6 text-slate-600">
-                        ${tt.subject_details ? tt.subject_details.subject_name : 'Subject ' + tt.subject}
-                        <span class="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">${tt.subject_category || 'Theory'}</span>
-                    </td>
+                    <td class="py-4 px-6 text-slate-600">${tt.subject_details ? tt.subject_details.subject_name : 'Subject ' + tt.subject}</td>
                     <td class="py-4 px-6 text-slate-600">${tt.faculty_name || 'Faculty ' + tt.faculty}</td>
                     <td class="py-4 px-6">
                         <div class="flex items-center justify-center gap-3">
-                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" onclick="editTimetable(${tt.timetable_id}, '${tt.department}', ${tt.year}, '${tt.day_of_week}', ${tt.period_number}, '${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'}', '${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}', ${tt.subject}, ${tt.faculty}, '${tt.subject_category || 'Theory'}')">
+                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" onclick="editTimetable(${tt.timetable_id}, '${tt.department}', ${tt.year}, '${tt.day_of_week}', ${tt.period_number}, '${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'}', '${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}', ${tt.subject}, ${tt.faculty})">
                                 <i data-lucide="edit-2" class="w-4 h-4"></i>
                             </button>
                             <button class="text-slate-400 hover:text-red-500 transition-colors" onclick="deleteTimetable(${tt.timetable_id})">
@@ -173,7 +169,7 @@ async function deleteTimetable(id) {
     }
 }
 
-window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac, category) => {
+window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac) => {
     window.editingTimetableId = id;
     
     document.getElementById('ttDept').value = dept || '';
@@ -183,7 +179,6 @@ window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac, catego
     document.getElementById('ttStartTime').value = start || '';
     document.getElementById('ttEndTime').value = end || '';
     document.getElementById('ttSubject').value = subj || '';
-    document.getElementById('ttCategory').value = category || 'Theory';
     document.getElementById('ttFaculty').value = fac || '';
     
     document.querySelector('#addTimetableModalContent h3').innerText = 'Edit Timetable';
@@ -191,3 +186,91 @@ window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac, catego
     
     utils.showModal('addTimetableModal');
 }
+
+// Subject Management
+window.openManageSubjectsModal = async () => {
+    utils.showModal('manageSubjectsModal');
+    await loadManageSubjectsList();
+};
+
+async function loadManageSubjectsList() {
+    const list = document.getElementById('manageSubjectsList');
+    if (!list) return;
+    
+    list.innerHTML = '<div class="text-sm text-slate-500 text-center py-4">Loading...</div>';
+    try {
+        const subjects = await api.get('/students/subjects/');
+        if (subjects.length === 0) {
+            list.innerHTML = '<div class="text-sm text-slate-500 text-center py-4">No subjects found.</div>';
+            return;
+        }
+        
+        list.innerHTML = '';
+        subjects.forEach(s => {
+            list.innerHTML += `
+                <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-shadow group">
+                    <div>
+                        <div class="font-semibold text-slate-700 text-sm">${s.subject_name}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${s.subject_code} &bull; ${s.department_details ? s.department_details.code : ''}</div>
+                    </div>
+                    <button onclick="deleteManageSubject(${s.subject_id})" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+        });
+        lucide.createIcons();
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<div class="text-sm text-red-500 text-center py-4">Error loading subjects.</div>';
+    }
+}
+
+document.getElementById('addSubjectForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('newSubjectName').value.trim();
+    const dept = document.getElementById('ttDept').value;
+    const year = document.getElementById('ttYear').value;
+    
+    if (!name) return;
+    if (!dept) {
+        utils.showToast('Please select a Department first', 'error');
+        return;
+    }
+    
+    try {
+        const code = name.substring(0, 3).toUpperCase() + Math.floor(100 + Math.random() * 900);
+        await api.post('/students/subjects/', {
+            subject_name: name,
+            subject_code: code,
+            department: dept,
+            year: year || 1,
+            credits: 3
+        });
+        
+        document.getElementById('newSubjectName').value = '';
+        utils.showToast('Subject added successfully', 'success');
+        
+        // Reload both lists
+        await loadManageSubjectsList();
+        await loadSubjects();
+    } catch (err) {
+        console.error(err);
+        utils.showToast('Error adding subject', 'error');
+    }
+});
+
+window.deleteManageSubject = async (id) => {
+    if (!confirm('Are you sure you want to delete this subject? It might affect existing timetables.')) return;
+    try {
+        await api.delete(`/students/subjects/${id}/`);
+        utils.showToast('Subject deleted', 'success');
+        
+        // Reload both lists
+        await loadManageSubjectsList();
+        await loadSubjects();
+    } catch (err) {
+        console.error(err);
+        utils.showToast('Error deleting subject', 'error');
+    }
+};
