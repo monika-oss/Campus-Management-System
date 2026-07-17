@@ -48,7 +48,7 @@ class FacultyViewSet(viewsets.ModelViewSet):
             students = students.filter(section=section)
             
         serializer = StudentSerializer(students, many=True)
-        data = serializer.data
+        data = [dict(item) for item in serializer.data]
         
         date_str = request.query_params.get('date')
         period_str = request.query_params.get('period')
