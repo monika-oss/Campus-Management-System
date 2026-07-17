@@ -183,10 +183,50 @@
                             <thead>
                                 <tr class="border-b border-slate-200 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                                     <th class="py-3 px-4">Student</th>
-                                    <th class="py-3 px-4">Subject</th>
-                                    <th class="py-3 px-4">Semester</th>
+                                    <th class="relative group py-3 px-4">
+                                        <div class="flex items-center justify-between gap-2 cursor-pointer filter-popover-trigger">
+                                            <span>Subject</span>
+                                            <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-500 hover:text-blue-700"></i>
+                                        </div>
+                                        <div class="filter-popover-content absolute hidden top-full mt-1 left-0 bg-white border border-slate-200 shadow-xl p-2 rounded-lg z-10 w-48 font-normal normal-case text-slate-800">
+                                            <select id="subjectFilter" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none transition-all text-xs font-normal normal-case">
+                                                <option value="">All Subjects</option>
+                                            </select>
+                                        </div>
+                                    </th>
+                                    <th class="relative group py-3 px-4">
+                                        <div class="flex items-center justify-between gap-2 cursor-pointer filter-popover-trigger">
+                                            <span>Semester</span>
+                                            <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-500 hover:text-blue-700"></i>
+                                        </div>
+                                        <div class="filter-popover-content absolute hidden top-full mt-1 left-0 bg-white border border-slate-200 shadow-xl p-2 rounded-lg z-10 w-48 font-normal normal-case text-slate-800">
+                                            <select id="semesterFilter" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none transition-all text-xs font-normal normal-case">
+                                                <option value="">All Semesters</option>
+                                                <option value="1 Semester">1 Semester</option>
+                                                <option value="2 Semester">2 Semester</option>
+                                                <option value="3 Semester">3 Semester</option>
+                                                <option value="4 Semester">4 Semester</option>
+                                                <option value="5 Semester">5 Semester</option>
+                                                <option value="6 Semester">6 Semester</option>
+                                                <option value="7 Semester">7 Semester</option>
+                                                <option value="8 Semester">8 Semester</option>
+                                            </select>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-4">Marks</th>
-                                    <th class="py-3 px-4">Published</th>
+                                    <th class="relative group py-3 px-4">
+                                        <div class="flex items-center justify-between gap-2 cursor-pointer filter-popover-trigger">
+                                            <span>Published</span>
+                                            <i data-lucide="filter" class="w-3.5 h-3.5 text-blue-500 hover:text-blue-700"></i>
+                                        </div>
+                                        <div class="filter-popover-content absolute hidden top-full mt-1 right-0 bg-white border border-slate-200 shadow-xl p-2 rounded-lg z-10 w-48 font-normal normal-case text-slate-800">
+                                            <select id="publishedFilter" class="ant-input w-full border border-slate-300 focus:border-blue-500 focus:outline-none transition-all text-xs font-normal normal-case">
+                                                <option value="">All</option>
+                                                <option value="Yes">Yes</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                        </div>
+                                    </th>
                                     <th class="py-3 px-4 text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -238,9 +278,11 @@
                 try {
                     const subjects = await api.get('/students/subjects/');
                     const bulkSubjectSelect = document.getElementById('bulkSubject');
+                    const subjectFilter = document.getElementById('subjectFilter');
                     if (subjects && subjects.length) {
                         subjects.forEach(sub => {
                             bulkSubjectSelect.innerHTML += `<option value="${sub.subject_id}">${sub.subject_name}</option>`;
+                            if (subjectFilter) subjectFilter.innerHTML += `<option value="${sub.subject_name}">${sub.subject_name}</option>`;
                         });
                     }
                 } catch (e) {
@@ -263,8 +305,20 @@
 
             function renderResultsTable() {
                 const tbody = document.querySelector('#resultsTable tbody');
-                const data = window.resultsData || [];
+                let data = window.resultsData || [];
                 
+                // Filters
+                const subF = document.getElementById('subjectFilter')?.value || '';
+                const semF = document.getElementById('semesterFilter')?.value || '';
+                const pubF = document.getElementById('publishedFilter')?.value || '';
+
+                data = data.filter(r => {
+                    const matchSub = !subF || r.subject_details?.subject_name === subF;
+                    const matchSem = !semF || `${r.semester} Semester` === semF;
+                    const matchPub = !pubF || (pubF === 'Yes' ? r.is_published : !r.is_published);
+                    return matchSub && matchSem && matchPub;
+                });
+
                 if (data.length) {
                     const paginated = utils.paginateData(data, resultsCurrentPage, ITEMS_PER_PAGE);
                     tbody.innerHTML = paginated.map(r => {
@@ -338,6 +392,14 @@
                     btn.disabled = false;
                     if(window.lucide) lucide.createIcons();
                 }
+            });
+
+            // Filter listeners
+            document.querySelectorAll('#subjectFilter, #semesterFilter, #publishedFilter').forEach(el => {
+                if (el) el.addEventListener('change', () => {
+                    resultsCurrentPage = 1;
+                    renderResultsTable();
+                });
             });
 
             loadResults();
