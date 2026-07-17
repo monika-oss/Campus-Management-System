@@ -29,3 +29,4 @@ class FacultyODAssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = FacultyODAssignment
         fields = '__all__'
+        read_only_fields = ('assigned_by', 'students')
