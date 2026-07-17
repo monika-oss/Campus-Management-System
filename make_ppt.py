@@ -1,33 +1,28 @@
 # ============================================================
-#  Smart Campus Management System - PPT Generator
-#  Run: python make_ppt.py
-#  Screenshots folder: ppt_screenshots/
+#  Smart Campus Management - Minimalist Professional PPT
+#  Theme: Clean, Less Text, Perfect Alignment
 # ============================================================
 
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
-import os, sys
+from pptx.enum.shapes import MSO_SHAPE
+import os
 
 # ── Paths ────────────────────────────────────────────────────
 SS_DIR      = os.path.join(os.path.dirname(__file__), "ppt_screenshots")
-OUTPUT_PATH = r"C:\Users\preet\OneDrive\Desktop\Smart_Campus_Presentation.pptx"
+OUTPUT_PATH = r"C:\Users\preet\OneDrive\Desktop\Smart_Campus_Clean_Presentation.pptx"
 
 # ── Color Palette ─────────────────────────────────────────────
-DARK_NAVY   = RGBColor(0x0F, 0x17, 0x2A)
-MID_BLUE    = RGBColor(0x1E, 0x3A, 0x5F)
-ACCENT_BLUE = RGBColor(0x25, 0x63, 0xEB)
-LIGHT_BLUE  = RGBColor(0xDB, 0xEA, 0xFE)
-WHITE       = RGBColor(0xFF, 0xFF, 0xFF)
-SLATE_400   = RGBColor(0x94, 0xA3, 0xB8)
-SLATE_500   = RGBColor(0x64, 0x74, 0x8B)
-SLATE_700   = RGBColor(0x33, 0x4E, 0x68)
-SLATE_100   = RGBColor(0xF1, 0xF5, 0xF9)
-GREEN       = RGBColor(0x05, 0x96, 0x69)
-AMBER       = RGBColor(0xD9, 0x77, 0x06)
-PURPLE      = RGBColor(0x7C, 0x3A, 0xED)
-RED         = RGBColor(0xDC, 0x26, 0x26)
+BG_WHITE    = RGBColor(255, 255, 255)
+BG_LIGHT    = RGBColor(248, 250, 252)
+TEXT_DARK   = RGBColor(15, 23, 42)
+TEXT_MUTED  = RGBColor(71, 85, 105)
+ACCENT_BLUE = RGBColor(37, 99, 235)
+ACCENT_GOLD = RGBColor(212, 175, 55)
+DIVIDER     = RGBColor(226, 232, 240)
+SHADOW_CLR  = RGBColor(203, 213, 225)
 
 prs = Presentation()
 prs.slide_width  = Inches(13.33)
@@ -35,8 +30,8 @@ prs.slide_height = Inches(7.5)
 BLANK = prs.slide_layouts[6]
 
 # ── Helpers ───────────────────────────────────────────────────
-def rect(slide, l, t, w, h, fill=None, line=None, lw=Pt(0)):
-    s = slide.shapes.add_shape(1, Inches(l), Inches(t), Inches(w), Inches(h))
+def rect(slide, l, t, w, h, fill=None, line=None, lw=Pt(0), shape=MSO_SHAPE.RECTANGLE):
+    s = slide.shapes.add_shape(shape, Inches(l), Inches(t), Inches(w), Inches(h))
     s.fill.solid() if fill else s.fill.background()
     if fill: s.fill.fore_color.rgb = fill
     s.line.fill.background()
@@ -45,465 +40,253 @@ def rect(slide, l, t, w, h, fill=None, line=None, lw=Pt(0)):
         s.line.width = lw
     return s
 
-def text(slide, txt, l, t, w, h, size=Pt(14), bold=False,
-         color=WHITE, align=PP_ALIGN.LEFT, wrap=True):
+def text(slide, txt, l, t, w, h, size=Pt(14), bold=False, color=TEXT_DARK, align=PP_ALIGN.LEFT, font="Segoe UI Light"):
     tb = slide.shapes.add_textbox(Inches(l), Inches(t), Inches(w), Inches(h))
-    tb.word_wrap = wrap
-    tf = tb.text_frame
-    tf.word_wrap = wrap
-    p = tf.paragraphs[0]
+    tb.word_wrap = True
+    p = tb.text_frame.paragraphs[0]
     p.alignment = align
     r = p.add_run()
     r.text = txt
     r.font.size = size
     r.font.bold = bold
     r.font.color.rgb = color
-    r.font.name = "Calibri"
+    r.font.name = font
     return tb
 
 def ss(name):
-    """Return full path to a screenshot file, or None if missing."""
     p = os.path.join(SS_DIR, name)
     return p if os.path.exists(p) else None
 
-def img_slide(title, img_file, slide_num, subtitle=""):
-    """Slide with a full-bleed screenshot + title overlay bar."""
+def add_header(s, title, slide_num):
+    # Top Accent Lines
+    rect(s, 0, 0, 13.33, 0.08, fill=ACCENT_BLUE)
+    rect(s, 0, 0.08, 13.33, 0.04, fill=ACCENT_GOLD)
+    
+    # Title
+    text(s, title, 0.6, 0.35, 12, 0.6, size=Pt(32), bold=True, color=TEXT_DARK, font="Segoe UI")
+    
+    # Bottom Footer
+    rect(s, 0.6, 7.1, 12.13, 0.02, fill=DIVIDER)
+    text(s, "Smart Campus Management & Student Analytics", 0.6, 7.15, 6, 0.3, size=Pt(10), color=TEXT_MUTED, font="Segoe UI")
+    text(s, f"Prime Vector | Slide {slide_num}", 6, 7.15, 6.7, 0.3, size=Pt(10), color=TEXT_MUTED, align=PP_ALIGN.RIGHT, font="Segoe UI")
+
+def clean_split_slide(num, step_title, bullet_points, img_file):
     s = prs.slides.add_slide(BLANK)
-    # Background
-    rect(s, 0, 0, 13.33, 7.5, fill=SLATE_100)
-    # Image
+    rect(s, 0, 0, 13.33, 7.5, fill=BG_WHITE)
+    add_header(s, step_title, num)
+    
+    # EXACT LEFT ALIGNMENT: x=0.6, width=4.8
+    y = 1.6
+    for pt in bullet_points:
+        # Title of the bullet
+        text(s, pt['title'], 0.6, y, 4.8, 0.4, size=Pt(18), bold=True, color=ACCENT_BLUE, font="Segoe UI")
+        y += 0.4
+        # Description (very short)
+        text(s, pt['desc'], 0.6, y, 4.8, 0.6, size=Pt(15), color=TEXT_MUTED, font="Segoe UI")
+        y += 0.8  # Fixed spacing between items
+
+    # EXACT RIGHT ALIGNMENT: Image strictly placed in a specific box
+    # Box coordinates: x=5.8, y=1.2, width=7.0, height=5.5
+    img_x, img_y, img_w, img_h = 5.8, 1.3, 7.0, 5.3
+    
+    # Add a clean professional shadow/border block behind the image
+    rect(s, img_x+0.05, img_y+0.05, img_w, img_h, fill=SHADOW_CLR)
+    rect(s, img_x, img_y, img_w, img_h, fill=BG_WHITE, line=DIVIDER, lw=Pt(1.5))
+
     path = ss(img_file)
     if path:
-        s.shapes.add_picture(path, Inches(0), Inches(1.0), Inches(13.33), Inches(6.5))
+        # We constrain the image to fit exactly inside the white block with a tiny margin
+        margin = 0.05
+        s.shapes.add_picture(path, Inches(img_x + margin), Inches(img_y + margin), 
+                             Inches(img_w - 2*margin), Inches(img_h - 2*margin))
     else:
-        # Placeholder when screenshot is missing
-        rect(s, 0.3, 1.1, 12.73, 6.3, fill=MID_BLUE)
-        text(s, f"[ Screenshot: {img_file} ]", 2, 3.5, 9.33, 1,
-             size=Pt(18), bold=False, color=SLATE_400, align=PP_ALIGN.CENTER)
-        text(s, f"Save your screenshot as:\nppt_screenshots/{img_file}",
-             2, 4.5, 9.33, 1.2, size=Pt(14), bold=False,
-             color=RGBColor(0x60,0x80,0xB0), align=PP_ALIGN.CENTER)
-    # Title bar (on top of image)
-    rect(s, 0, 0, 13.33, 1.0, fill=DARK_NAVY)
-    text(s, title, 0.3, 0.08, 11.5, 0.85, size=Pt(28), bold=True,
-         color=WHITE, align=PP_ALIGN.LEFT)
-    if subtitle:
-        text(s, subtitle, 0.3, 0.62, 9, 0.45, size=Pt(13),
-             color=SLATE_400, align=PP_ALIGN.LEFT)
-    text(s, str(slide_num), 12.8, 0.05, 0.5, 0.4,
-         size=Pt(13), color=SLATE_500, align=PP_ALIGN.RIGHT)
-    return s
+        text(s, f"Screenshot missing:\n{img_file}", img_x, img_y+2, img_w, 1.0, 
+             size=Pt(16), color=TEXT_MUTED, align=PP_ALIGN.CENTER)
 
-def content_slide(num, title, subtitle, bullets, accent=ACCENT_BLUE, bg=DARK_NAVY):
-    s = prs.slides.add_slide(BLANK)
-    rect(s, 0, 0, 13.33, 7.5, fill=bg)
-    rect(s, 0, 0, 13.33, 0.07, fill=accent)
-    rect(s, 0, 0.07, 0.06, 7.43, fill=accent)
-    text(s, title, 0.35, 0.12, 12.5, 0.9, size=Pt(34), bold=True, color=WHITE)
-    if subtitle:
-        text(s, subtitle, 0.35, 1.0, 12.2, 0.55, size=Pt(15), color=SLATE_400)
-    y = 1.6
-    for b in bullets:
-        if isinstance(b, tuple):
-            head, body = b
-            text(s, f"  ->  {head}", 0.35, y, 12.5, 0.45,
-                 size=Pt(17), bold=True, color=accent)
-            y += 0.43
-            text(s, f"        {body}", 0.35, y, 12.5, 0.44,
-                 size=Pt(14), color=WHITE)
-            y += 0.46
-        else:
-            text(s, f"   *   {b}", 0.35, y, 12.5, 0.48,
-                 size=Pt(16), color=WHITE)
-            y += 0.5
-    text(s, str(num), 12.7, 7.1, 0.5, 0.35,
-         size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
-    return s
-
-def three_col(num, title, cols, bg=DARK_NAVY):
-    s = prs.slides.add_slide(BLANK)
-    rect(s, 0, 0, 13.33, 7.5, fill=bg)
-    rect(s, 0, 0, 13.33, 0.07, fill=ACCENT_BLUE)
-    text(s, title, 0.35, 0.12, 12.5, 0.9, size=Pt(32), bold=True, color=WHITE)
-    xstart, cw, gap = 0.4, 4.0, 0.26
-    for i, (heading, col_color, items) in enumerate(cols):
-        x = xstart + i*(cw+gap)
-        rect(s, x, 1.15, cw, 5.9, fill=MID_BLUE, line=col_color, lw=Pt(1.5))
-        rect(s, x, 1.15, cw, 0.65, fill=col_color)
-        text(s, heading, x+0.1, 1.2, cw-0.2, 0.58, size=Pt(16), bold=True,
-             color=WHITE, align=PP_ALIGN.CENTER)
-        y = 2.0
-        for item in items:
-            text(s, f"  + {item}", x+0.15, y, cw-0.3, 0.55,
-                 size=Pt(13), color=SLATE_400)
-            y += 0.56
-    text(s, str(num), 12.7, 7.1, 0.5, 0.35,
-         size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
     return s
 
 
 # ============================================================
-#  SLIDE 1 – TITLE
+#  1. TITLE SLIDE (Ultra Minimal)
 # ============================================================
 s1 = prs.slides.add_slide(BLANK)
-rect(s1, 0, 0, 13.33, 7.5, fill=DARK_NAVY)
-rect(s1, 0, 0, 13.33, 0.07, fill=ACCENT_BLUE)
-rect(s1, 0, 7.43, 13.33, 0.07, fill=ACCENT_BLUE)
-# Screenshot of login page as bg (optional)
-path = ss("01_login.png")
-if path:
-    pic = s1.shapes.add_picture(path, Inches(7.0), Inches(1.2), Inches(5.9), Inches(5.0))
-# Title text
-text(s1, "Smart Campus", 0.5, 1.5, 7, 1.2, size=Pt(52), bold=True,
-     color=WHITE, align=PP_ALIGN.LEFT)
-text(s1, "Management System", 0.5, 2.7, 7, 1.1, size=Pt(40), bold=True,
-     color=ACCENT_BLUE, align=PP_ALIGN.LEFT)
-rect(s1, 0.5, 3.85, 3.5, 0.06, fill=ACCENT_BLUE)
-text(s1, "Full Stack Web Development Project", 0.5, 4.0, 7, 0.65,
-     size=Pt(18), color=SLATE_400, align=PP_ALIGN.LEFT)
-text(s1, "Python Django  |  HTML/CSS/JS  |  Tailwind CSS  |  REST API",
-     0.5, 4.7, 7, 0.55, size=Pt(14), color=RGBColor(0x60,0x80,0xB0))
-text(s1, "Submitted to: Prime Vector\nTraining Program – Full Stack Development",
-     0.5, 5.6, 7, 0.85, size=Pt(13), color=SLATE_500)
-text(s1, "1", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
+rect(s1, 0, 0, 13.33, 7.5, fill=BG_WHITE)
+
+rect(s1, 0, 0, 0.3, 7.5, fill=ACCENT_BLUE)
+rect(s1, 0.3, 0, 0.08, 7.5, fill=ACCENT_GOLD)
+
+text(s1, "PROJECT ALLOCATION", 1.0, 2.3, 10, 0.5, size=Pt(14), bold=True, color=ACCENT_GOLD, font="Segoe UI")
+text(s1, "Smart Campus Management", 1.0, 2.6, 10, 0.8, size=Pt(48), bold=True, color=TEXT_DARK, font="Segoe UI")
+text(s1, "& Student Analytics Platform", 1.0, 3.4, 10, 0.8, size=Pt(48), bold=True, color=TEXT_DARK, font="Segoe UI")
+
+rect(s1, 1.05, 4.4, 1.5, 0.03, fill=ACCENT_BLUE)
+
+text(s1, "Full Stack Web Development Major Project", 1.0, 4.6, 8, 0.5, size=Pt(18), color=TEXT_MUTED, font="Segoe UI")
+text(s1, "Submitted to: Prime Vector", 1.0, 5.4, 8, 0.4, size=Pt(14), bold=True, color=TEXT_DARK, font="Segoe UI")
+text(s1, "Developed by: Preethi", 1.0, 5.8, 8, 0.4, size=Pt(14), color=TEXT_MUTED, font="Segoe UI")
 
 # ============================================================
-#  SLIDE 2 – AGENDA
+#  2. PROJECT SCOPE (No Images)
 # ============================================================
 s2 = prs.slides.add_slide(BLANK)
-rect(s2, 0, 0, 13.33, 7.5, fill=WHITE)
-rect(s2, 0, 0, 0.5, 7.5, fill=ACCENT_BLUE)
-text(s2, "Agenda", 0.8, 0.2, 11, 0.9, size=Pt(36), bold=True,
-     color=DARK_NAVY, align=PP_ALIGN.LEFT)
-items = [
-    ("01", "Project Overview & Objectives"),
-    ("02", "Problem Statement"),
-    ("03", "Technology Stack"),
-    ("04", "System Architecture"),
-    ("05", "Role-Based Access Control"),
-    ("06", "Admin Module – Dashboard, Students, Leave, Results"),
-    ("07", "Faculty Module – Attendance, Leave Approvals"),
-    ("08", "Student Module – Dashboard, Leaves, Results"),
-    ("09", "Key Features & Security"),
-    ("10", "Conclusion & Thank You"),
+rect(s2, 0, 0, 13.33, 7.5, fill=BG_WHITE)
+add_header(s2, "Project Scope & Tech Stack", 2)
+
+y = 1.6
+text(s2, "Core Objective", 0.6, y, 12, 0.4, size=Pt(20), bold=True, color=ACCENT_BLUE, font="Segoe UI")
+y += 0.4
+text(s2, "To digitize and centralize campus administration, replacing paper-based workflows with a real-time, role-based digital platform.", 0.6, y, 12, 0.5, size=Pt(16), color=TEXT_MUTED, font="Segoe UI")
+
+y += 1.0
+text(s2, "Technology Stack", 0.6, y, 12, 0.4, size=Pt(20), bold=True, color=ACCENT_BLUE, font="Segoe UI")
+y += 0.5
+
+# Tech Stack boxes
+techs = [
+    ("Frontend UI", "HTML5, CSS3, JavaScript, Tailwind CSS"),
+    ("Backend API", "Python, Django REST Framework, JWT Auth"),
+    ("Database", "PostgreSQL (Production), SQLite (Dev)"),
+    ("Deployment", "Vercel (Client) & Render.com (Server)")
 ]
-col = 0
-for i, (num, label) in enumerate(items):
-    x = 0.9 if col == 0 else 7.1
-    y = 1.3 + (i % 5) * 1.05
-    if i == 5: col = 1
-    rect(s2, x, y, 0.55, 0.55, fill=ACCENT_BLUE)
-    text(s2, num, x+0.02, y+0.05, 0.5, 0.45, size=Pt(16), bold=True,
-         color=WHITE, align=PP_ALIGN.CENTER)
-    text(s2, label, x+0.65, y+0.06, 5.5, 0.45, size=Pt(14),
-         color=DARK_NAVY, align=PP_ALIGN.LEFT)
-text(s2, "2", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
+for i, (title, desc) in enumerate(techs):
+    x_pos = 0.6 + (i % 2) * 6.0
+    y_pos = y + (i // 2) * 1.2
+    rect(s2, x_pos, y_pos, 5.5, 0.9, fill=BG_LIGHT, line=DIVIDER, lw=Pt(1))
+    rect(s2, x_pos, y_pos, 0.1, 0.9, fill=ACCENT_GOLD)
+    text(s2, title, x_pos+0.3, y_pos+0.1, 5.0, 0.3, size=Pt(16), bold=True, color=TEXT_DARK, font="Segoe UI")
+    text(s2, desc, x_pos+0.3, y_pos+0.45, 5.0, 0.3, size=Pt(13), color=TEXT_MUTED, font="Segoe UI")
 
 # ============================================================
-#  SLIDE 3 – PROBLEM STATEMENT
+#  3. COMPLETE APPLICATION WORKFLOW
 # ============================================================
-content_slide(3, "Problem Statement",
-    "What challenges exist in traditional campus management?",
-    [
-        ("Manual Attendance Tracking",
-         "Faculty marks attendance on paper. Error-prone, time-consuming, no digital record."),
-        ("No Digital Leave Workflow",
-         "Students submit leave on paper. No multi-level approval. No tracking or history."),
-        ("Scattered Academic Data",
-         "Results, announcements, and attendance stored in separate unconnected systems."),
-        ("No Role-Based Access",
-         "No secure, separate portals for Admin / Faculty / Student with proper permissions."),
-    ], accent=RED, bg=DARK_NAVY
-)
+s3 = prs.slides.add_slide(BLANK)
+rect(s3, 0, 0, 13.33, 7.5, fill=BG_WHITE)
+add_header(s3, "Complete Application Workflow", 3)
 
-# ============================================================
-#  SLIDE 4 – PROJECT OVERVIEW
-# ============================================================
-content_slide(4, "Project Overview",
-    "Smart Campus Management System – A centralized full-stack web platform",
-    [
-        "Single platform for Admins, Faculty, and Students",
-        "Digitizes attendance, leave, results, and announcements",
-        "Secure JWT-based login with 3 role-based portals",
-        "Frontend hosted on Vercel | Backend REST API on Render cloud",
-        "Responsive UI that works on Desktop, Tablet, and Mobile",
-        "Real-time data from Django REST Framework backend",
-    ]
-)
+y_base = 1.6
 
-# ============================================================
-#  SLIDE 5 – TECHNOLOGY STACK
-# ============================================================
-s5 = prs.slides.add_slide(BLANK)
-rect(s5, 0, 0, 13.33, 7.5, fill=DARK_NAVY)
-rect(s5, 0, 0, 13.33, 0.07, fill=ACCENT_BLUE)
-text(s5, "Technology Stack", 0.35, 0.12, 12.5, 0.9, size=Pt(34), bold=True, color=WHITE)
-# Two-column grid of tech cards
-categories = [
-    ("Frontend", ACCENT_BLUE, ["HTML5 + CSS3", "JavaScript (ES6+)", "Tailwind CSS", "Lucide Icons"]),
-    ("Backend",  GREEN,       ["Python 3.11", "Django 4.x", "Django REST Framework", "JWT Auth (SimpleJWT)"]),
-    ("Database", PURPLE,      ["SQLite (dev)", "PostgreSQL (prod)", "Django ORM", "Migration system"]),
-    ("Deploy",   AMBER,       ["Vercel (Frontend)", "Render.com (Backend)", "GitHub Pages", "GitHub CI/CD"]),
-    ("Tools",    RED,         ["VS Code", "Git + GitHub", "Postman API testing", "Figma (wireframes)"]),
+# We'll create 3 distinct columns for Admin, Faculty, and Student flows
+rect(s3, 0.6, y_base, 3.8, 5.0, fill=BG_LIGHT, line=DIVIDER, lw=Pt(1))
+rect(s3, 0.6, y_base, 3.8, 0.08, fill=ACCENT_BLUE)
+text(s3, "Admin Flow", 0.8, y_base + 0.2, 3.4, 0.4, size=Pt(20), bold=True, color=TEXT_DARK, font="Segoe UI")
+admin_flow = [
+    "Manage all user accounts",
+    "Monitor global leave requests",
+    "Upload semester exam marks",
+    "Broadcast campus announcements"
 ]
-cols_per_row = 3
-xstart, ystart, cw, ch, gap = 0.35, 1.2, 3.9, 2.6, 0.27
-for i, (cat, color, items_list) in enumerate(categories):
-    row, col = divmod(i, cols_per_row)
-    x = xstart + col*(cw+gap)
-    y = ystart + row*(ch+0.25)
-    rect(s5, x, y, cw, ch, fill=MID_BLUE, line=color, lw=Pt(1.5))
-    rect(s5, x, y, cw, 0.5, fill=color)
-    text(s5, cat, x+0.1, y+0.05, cw-0.2, 0.42,
-         size=Pt(15), bold=True, color=WHITE, align=PP_ALIGN.CENTER)
-    for j, item in enumerate(items_list):
-        text(s5, f"  - {item}", x+0.12, y+0.55+j*0.47, cw-0.25, 0.45,
-             size=Pt(12), color=SLATE_400)
-text(s5, "5", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
+ay = y_base + 0.9
+for pt in admin_flow:
+    text(s3, f"▪ {pt}", 0.8, ay, 3.4, 0.4, size=Pt(14), color=TEXT_MUTED, font="Segoe UI")
+    ay += 0.55
 
-# ============================================================
-#  SLIDE 6 – SYSTEM ARCHITECTURE
-# ============================================================
-s6 = prs.slides.add_slide(BLANK)
-rect(s6, 0, 0, 13.33, 7.5, fill=DARK_NAVY)
-rect(s6, 0, 0, 13.33, 0.07, fill=ACCENT_BLUE)
-text(s6, "System Architecture", 0.35, 0.12, 12.5, 0.9, size=Pt(34), bold=True, color=WHITE)
-# 3-Tier Diagram
-tiers = [
-    (ACCENT_BLUE, "TIER 1 – Frontend (Client)", "HTML / CSS / JavaScript / Tailwind", 1.1),
-    (GREEN,       "TIER 2 – Backend API (Server)", "Python Django REST Framework + JWT Auth", 2.9),
-    (PURPLE,      "TIER 3 – Database", "PostgreSQL / SQLite via Django ORM", 4.7),
+rect(s3, 4.76, y_base, 3.8, 5.0, fill=BG_LIGHT, line=DIVIDER, lw=Pt(1))
+rect(s3, 4.76, y_base, 3.8, 0.08, fill=ACCENT_GOLD)
+text(s3, "Faculty Flow", 4.96, y_base + 0.2, 3.4, 0.4, size=Pt(20), bold=True, color=TEXT_DARK, font="Segoe UI")
+faculty_flow = [
+    "Select class and date",
+    "Mark daily student attendance",
+    "Review student leave applications",
+    "Approve / Reject leave requests"
 ]
-for color, heading, sub, y in tiers:
-    rect(s6, 2.5, y, 8.33, 1.45, fill=MID_BLUE, line=color, lw=Pt(2))
-    rect(s6, 2.5, y, 8.33, 0.5, fill=color)
-    text(s6, heading, 2.65, y+0.06, 8, 0.42, size=Pt(16), bold=True, color=WHITE)
-    text(s6, sub, 2.65, y+0.55, 8, 0.55, size=Pt(13), color=SLATE_400)
-# Arrows between tiers
-for ay in [2.55, 4.37]:
-    rect(s6, 6.3, ay, 0.73, 0.35, fill=ACCENT_BLUE)
-    text(s6, " REST API", 6.32, ay+0.03, 0.8, 0.3, size=Pt(10), bold=True, color=WHITE)
-# Users on left
-text(s6, "USERS", 0.1, 2.0, 1.5, 0.5, size=Pt(13), bold=True, color=SLATE_400)
-for uy, ul, uc in [(2.55, "Admin", ACCENT_BLUE), (3.3, "Faculty", GREEN), (4.05, "Student", AMBER)]:
-    rect(s6, 0.1, uy, 1.4, 0.55, fill=MID_BLUE, line=uc, lw=Pt(1.5))
-    text(s6, ul, 0.12, uy+0.06, 1.36, 0.42, size=Pt(13), bold=True, color=uc, align=PP_ALIGN.CENTER)
-    # Arrow to frontend
-    rect(s6, 1.5, uy+0.18, 1.0, 0.18, fill=uc)
-# Cloud label
-rect(s6, 10.5, 1.5, 2.4, 2.0, fill=MID_BLUE, line=AMBER, lw=Pt(1.5))
-text(s6, "Cloud Deploy", 10.55, 1.55, 2.3, 0.45, size=Pt(12), bold=True, color=AMBER)
-text(s6, "Vercel\n(Frontend)", 10.55, 2.0, 2.3, 0.6, size=Pt(11), color=SLATE_400)
-text(s6, "Render.com\n(Backend)", 10.55, 2.65, 2.3, 0.6, size=Pt(11), color=SLATE_400)
-text(s6, "6", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
+fy = y_base + 0.9
+for pt in faculty_flow:
+    text(s3, f"▪ {pt}", 4.96, fy, 3.4, 0.4, size=Pt(14), color=TEXT_MUTED, font="Segoe UI")
+    fy += 0.55
+
+rect(s3, 8.93, y_base, 3.8, 5.0, fill=BG_LIGHT, line=DIVIDER, lw=Pt(1))
+rect(s3, 8.93, y_base, 3.8, 0.08, fill=ACCENT_BLUE)
+text(s3, "Student Flow", 9.13, y_base + 0.2, 3.4, 0.4, size=Pt(20), bold=True, color=TEXT_DARK, font="Segoe UI")
+student_flow = [
+    "Login to personal dashboard",
+    "View live attendance percentage",
+    "Apply for medical/casual leave",
+    "Check semester exam results"
+]
+sy = y_base + 0.9
+for pt in student_flow:
+    text(s3, f"▪ {pt}", 9.13, sy, 3.4, 0.4, size=Pt(14), color=TEXT_MUTED, font="Segoe UI")
+    sy += 0.55
 
 # ============================================================
-#  SLIDE 7 – ROLE-BASED ACCESS CONTROL
+#  SLIDES 4 - 13 (Clean Split Slides)
 # ============================================================
-three_col(7, "Role-Based Access Control (JWT Authentication)",
-    [
-        ("Admin", ACCENT_BLUE, [
-            "Manage Students & Faculty",
-            "View all leave requests",
-            "Upload exam results",
-            "Post announcements",
-            "Full system access",
-        ]),
-        ("Faculty", GREEN, [
-            "Mark class attendance",
-            "Approve / reject leaves",
-            "Assign OD to students",
-            "View own class results",
-            "Department-limited view",
-        ]),
-        ("Student", AMBER, [
-            "View own attendance",
-            "Apply & track leaves",
-            "View exam results",
-            "Read announcements",
-            "Personal portal only",
-        ]),
-    ]
-)
+
+clean_split_slide(4, "UI/UX & Frontend Design", [
+    {"title": "Modern Aesthetics", "desc": "Implemented a clean, glassmorphism-inspired UI using Tailwind CSS."},
+    {"title": "Responsive Layout", "desc": "Interfaces adapt seamlessly across desktop, tablet, and mobile devices."},
+    {"title": "Client-Side Routing", "desc": "Smooth navigation transitions using JavaScript DOM manipulation."},
+], "01_login.png")
+
+clean_split_slide(5, "Admin Control Center", [
+    {"title": "Global Overview", "desc": "Administrators gain instant statistical insights into campus operations."},
+    {"title": "Live Data Aggregation", "desc": "KPI cards display Total Students, Faculty, and Global Pending Leaves in real-time."},
+    {"title": "Centralized Management", "desc": "Full access to User Management, Results generation, and Announcements."},
+], "02_admin_dashboard.png")
+
+clean_split_slide(6, "Student Record Management", [
+    {"title": "Complete Lifecycle", "desc": "Full CRUD capabilities (Create, Read, Update, Delete) for student data."},
+    {"title": "Secure Provisioning", "desc": "System automatically generates secure login credentials upon student creation."},
+    {"title": "Advanced Filtering", "desc": "Instant search mechanisms by Roll Number and Department."},
+], "03_admin_students.png")
+
+clean_split_slide(7, "Faculty: Attendance Tracking", [
+    {"title": "Daily Marking", "desc": "Faculty can rapidly mark attendance using dynamic student rosters."},
+    {"title": "Status Toggles", "desc": "One-click options for Present, Absent, Leave, or On-Duty (OD)."},
+    {"title": "Data Integrity", "desc": "Backend validation strictly prevents duplicate or future-dated entries."},
+], "09_faculty_attendance.png")
+
+clean_split_slide(8, "Digital Leave Workflow", [
+    {"title": "1. Submission", "desc": "Students submit leave requests specifying duration and reason digitally."},
+    {"title": "2. Faculty Review", "desc": "Requests instantly route to the Faculty dashboard for Approval/Rejection."},
+    {"title": "3. Status Updates", "desc": "Students receive real-time UI updates indicating their application status."},
+], "10_faculty_leave.png")
+
+clean_split_slide(9, "Examination & Result Processing", [
+    {"title": "Secure Grading", "desc": "Administrators upload subject marks securely via the result portal."},
+    {"title": "Automated Calculation", "desc": "System algorithm computes Grade Letters and precise GPA/CGPA."},
+    {"title": "Targeted Publishing", "desc": "Finalized grades are dispatched exclusively to the authenticated student's portal."},
+], "06_admin_results.png")
+
+clean_split_slide(10, "Student Performance Analytics", [
+    {"title": "Personalized Dashboard", "desc": "Students log in to a personalized, data-driven analytical view."},
+    {"title": "Real-Time Percentage", "desc": "Live calculation of cumulative attendance percentage."},
+    {"title": "Threshold Warnings", "desc": "Dynamic visual indicators highlight if attendance falls below 75%."},
+], "11_student_dashboard.png")
+
+clean_split_slide(11, "Notification System", [
+    {"title": "Digital Announcements", "desc": "Instantly replaces traditional, physical campus notice boards."},
+    {"title": "Campus-Wide Broadcasts", "desc": "Administrators publish notices that appear on all relevant dashboards."},
+    {"title": "Critical Updates", "desc": "Ensures exam schedules and holidays are communicated immediately."},
+], "07_admin_announce.png")
 
 # ============================================================
-#  SLIDE 8 – ADMIN DASHBOARD (screenshot)
+#  12. CONCLUSION
 # ============================================================
-img_slide("Admin Module – Dashboard", "02_admin_dashboard.png", 8,
-          "KPI cards: Total Students, Faculty, Pending Leaves | Attendance Analytics")
+s12 = prs.slides.add_slide(BLANK)
+rect(s12, 0, 0, 13.33, 7.5, fill=BG_WHITE)
+rect(s12, 0, 0, 13.33, 0.08, fill=ACCENT_BLUE)
+rect(s12, 0, 0.08, 13.33, 0.04, fill=ACCENT_GOLD)
 
-# ============================================================
-#  SLIDE 9 – ADMIN STUDENTS (screenshot)
-# ============================================================
-img_slide("Admin Module – Student Management", "03_admin_students.png", 9,
-          "View, Add, Edit, Delete student records | Search & filter")
+text(s12, "Project Completion Summary", 1.0, 1.5, 11, 0.8, size=Pt(40), bold=True, color=TEXT_DARK, font="Segoe UI")
+rect(s12, 1.0, 2.5, 3.0, 0.02, fill=DIVIDER)
 
-# ============================================================
-#  SLIDE 10 – ADMIN LEAVE (screenshot)
-# ============================================================
-img_slide("Admin Module – Leave Management", "05_admin_leave.png", 10,
-          "View all leave requests | Approve or Reject with status badges")
+y = 3.0
+for item in [
+    "Delivered all requirements specified in the Prime Vector mandate.",
+    "Engineered a secure, scalable RESTful API with PostgreSQL.",
+    "Developed a highly responsive, modern user interface.",
+    "Successfully deployed live via Vercel (Frontend) and Render (Backend)."
+]:
+    rect(s12, 1.0, y+0.1, 0.2, 0.2, fill=ACCENT_BLUE)
+    text(s12, item, 1.4, y, 10, 0.4, size=Pt(18), color=TEXT_MUTED, font="Segoe UI")
+    y += 0.7
 
-# ============================================================
-#  SLIDE 11 – ADMIN RESULTS & ANNOUNCEMENTS
-# ============================================================
-three_col(11, "Admin Module – Results & Announcements",
-    [
-        ("Results Management", ACCENT_BLUE, [
-            "Upload marks per subject",
-            "Auto-calculate GPA/CGPA",
-            "Grade letter assignment",
-            "Semester-wise filtering",
-            "Publish to student portal",
-        ]),
-        ("Announcements", GREEN, [
-            "Create campus-wide notices",
-            "Target specific departments",
-            "Rich text formatting",
-            "Timestamp & author info",
-            "Real-time delivery",
-        ]),
-        ("Faculty Management", PURPLE, [
-            "Add / edit faculty records",
-            "Assign subjects to faculty",
-            "Department grouping",
-            "Role assignment & access",
-            "View faculty activity",
-        ]),
-    ]
-)
-
-# ============================================================
-#  SLIDE 12 – FACULTY DASHBOARD (screenshot)
-# ============================================================
-img_slide("Faculty Module – Dashboard", "08_faculty_dashboard.png", 12,
-          "Quick stats: Today's Classes, Pending Approvals | Recent activity panel")
-
-# ============================================================
-#  SLIDE 13 – FACULTY ATTENDANCE (screenshot)
-# ============================================================
-img_slide("Faculty Module – Mark Attendance", "09_faculty_attendance.png", 13,
-          "Select class + date -> Load Students -> Mark P/A/L/OD per student -> Submit")
-
-# ============================================================
-#  SLIDE 14 – FACULTY LEAVE APPROVALS (screenshot)
-# ============================================================
-img_slide("Faculty Module – Leave Approvals", "10_faculty_leave.png", 14,
-          "Approve or Reject student leave requests | Multi-level workflow (Advisor -> HOD)")
-
-# ============================================================
-#  SLIDE 15 – FACULTY OD ASSIGNMENT
-# ============================================================
-content_slide(15, "Faculty Module – OD (On Duty) Assignment",
-    "Assign On-Duty status to students for official activities",
-    [
-        ("Select Students", "Choose eligible students from your class list"),
-        ("Enter OD Details", "Date, reason (seminar/workshop/sports/fest), duration"),
-        ("Auto Attendance Update", "OD status auto-marked in attendance — NOT counted as absent"),
-        ("Audit Trail", "Full history of OD assignments per faculty member"),
-    ], accent=PURPLE
-)
-
-# ============================================================
-#  SLIDE 16 – STUDENT DASHBOARD (screenshot)
-# ============================================================
-img_slide("Student Module – Dashboard", "11_student_dashboard.png", 16,
-          "Welcome banner | Attendance % | Quick actions: Apply Leave, View Grades | Announcements")
-
-# ============================================================
-#  SLIDE 17 – STUDENT LEAVES (screenshot)
-# ============================================================
-img_slide("Student Module – Leave Applications", "12_student_leaves.png", 17,
-          "Apply leave -> Advisor review -> HOD review -> Approved | Full history with status badges")
-
-# ============================================================
-#  SLIDE 18 – STUDENT RESULTS (screenshot)
-# ============================================================
-img_slide("Student Module – Academic Results", "13_student_results.png", 18,
-          "Subject-wise marks | GPA / CGPA | Grade letters | Semester-wise view")
-
-# ============================================================
-#  SLIDE 19 – KEY FEATURES & SECURITY
-# ============================================================
-three_col(19, "Key Features, Security & Deployment",
-    [
-        ("Security & Auth", ACCENT_BLUE, [
-            "JWT Token Authentication",
-            "Role-based route protection",
-            "CORS policy enforcement",
-            "Secure password hashing",
-            "Session auto-expiry",
-        ]),
-        ("UI/UX Highlights", GREEN, [
-            "Responsive on all devices",
-            "Glassmorphism design",
-            "Dark sidebar navigation",
-            "Toast notifications",
-            "Accessible mobile UI",
-        ]),
-        ("Deployment Stack", AMBER, [
-            "Frontend -> Vercel",
-            "Backend -> Render.com",
-            "DB -> PostgreSQL (cloud)",
-            "Source -> GitHub",
-            "Zero-downtime updates",
-        ]),
-    ]
-)
-
-# ============================================================
-#  SLIDE 20 – THANK YOU
-# ============================================================
-s20 = prs.slides.add_slide(BLANK)
-rect(s20, 0, 0, 13.33, 7.5, fill=DARK_NAVY)
-rect(s20, 0, 0, 13.33, 0.07, fill=ACCENT_BLUE)
-rect(s20, 0, 7.43, 13.33, 0.07, fill=ACCENT_BLUE)
-# Screenshot collage on right (if available)
-for idx, (fname, px, py, pw, ph) in enumerate([
-    ("09_faculty_attendance.png", 7.0, 0.3, 6.0, 3.3),
-    ("11_student_dashboard.png",  7.0, 3.7, 6.0, 3.5),
-]):
-    p = ss(fname)
-    if p:
-        s20.shapes.add_picture(p, Inches(px), Inches(py), Inches(pw), Inches(ph))
-# Text
-text(s20, "Thank You!", 0.5, 1.0, 6.3, 1.5,
-     size=Pt(56), bold=True, color=WHITE, align=PP_ALIGN.LEFT)
-rect(s20, 0.5, 2.6, 3.0, 0.07, fill=ACCENT_BLUE)
-text(s20, "Smart Campus Management System", 0.5, 2.75, 6.3, 0.7,
-     size=Pt(20), bold=True, color=LIGHT_BLUE)
-text(s20, "Full Stack Web Development Project\nSubmitted to: Prime Vector",
-     0.5, 3.5, 6.3, 0.8, size=Pt(15), color=SLATE_400)
-text(s20, "Tech Stack:", 0.5, 4.45, 2, 0.4, size=Pt(13), bold=True, color=SLATE_500)
-text(s20, "Python | Django REST | HTML | CSS | JavaScript | Tailwind CSS",
-     0.5, 4.85, 6.3, 0.5, size=Pt(13), color=SLATE_500)
-rect(s20, 0.5, 5.55, 6.0, 0.75, fill=ACCENT_BLUE)
-text(s20, "GitHub: github.com/monika-oss/Campus-Management-System",
-     0.6, 5.62, 5.8, 0.6, size=Pt(13), bold=True, color=WHITE)
-text(s20, "20", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=SLATE_500, align=PP_ALIGN.RIGHT)
+text(s12, "Thank You", 1.0, 6.0, 11, 0.6, size=Pt(28), bold=True, color=ACCENT_GOLD, font="Segoe UI")
+text(s12, "12", 12.7, 7.1, 0.5, 0.35, size=Pt(12), color=TEXT_MUTED, align=PP_ALIGN.RIGHT)
 
 # ============================================================
 #  SAVE
 # ============================================================
 prs.save(OUTPUT_PATH)
-print(f"PPT saved to: {OUTPUT_PATH}")
-print(f"Total slides: {len(prs.slides)}")
-
-# Check which screenshots are missing
-missing = []
-needed = [
-    "01_login.png","02_admin_dashboard.png","03_admin_students.png",
-    "04_admin_faculty.png","05_admin_leave.png","06_admin_results.png",
-    "07_admin_announce.png","08_faculty_dashboard.png","09_faculty_attendance.png",
-    "10_faculty_leave.png","11_student_dashboard.png","12_student_leaves.png",
-    "13_student_results.png"
-]
-for n in needed:
-    if not os.path.exists(os.path.join(SS_DIR, n)):
-        missing.append(n)
-if missing:
-    print("\nMISSING screenshots (add to ppt_screenshots/ folder):")
-    for m in missing:
-        print(f"  - {m}")
-else:
-    print("\nAll screenshots found! PPT is complete.")
+print(f"Minimalist PPT saved to: {OUTPUT_PATH}")
