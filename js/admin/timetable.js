@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 start_time: document.getElementById('ttStartTime').value,
                 end_time: document.getElementById('ttEndTime').value,
                 subject: document.getElementById('ttSubject').value,
+                subject_category: document.getElementById('ttCategory').value,
                 faculty: document.getElementById('ttFaculty').value
             };
             
@@ -128,11 +129,14 @@ async function loadTimetable() {
                     <td class="py-4 px-6 text-slate-600 whitespace-nowrap"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md text-xs font-semibold whitespace-nowrap">${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'} - ${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}</span></td>
                     <td class="py-4 px-6 text-slate-600 whitespace-nowrap">Yr ${tt.year}</td>
                     <td class="py-4 px-6 text-slate-600 font-semibold whitespace-nowrap">${tt.department}</td>
-                    <td class="py-4 px-6 text-slate-600">${tt.subject_details ? tt.subject_details.subject_name : 'Subject ' + tt.subject}</td>
+                    <td class="py-4 px-6 text-slate-600">
+                        ${tt.subject_details ? tt.subject_details.subject_name : 'Subject ' + tt.subject}
+                        <span class="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">${tt.subject_category || 'Theory'}</span>
+                    </td>
                     <td class="py-4 px-6 text-slate-600">${tt.faculty_name || 'Faculty ' + tt.faculty}</td>
                     <td class="py-4 px-6">
                         <div class="flex items-center justify-center gap-3">
-                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" onclick="editTimetable(${tt.timetable_id}, '${tt.department}', ${tt.year}, '${tt.day_of_week}', ${tt.period_number}, '${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'}', '${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}', ${tt.subject}, ${tt.faculty})">
+                            <button class="text-slate-400 hover:text-indigo-600 transition-colors" onclick="editTimetable(${tt.timetable_id}, '${tt.department}', ${tt.year}, '${tt.day_of_week}', ${tt.period_number}, '${tt.start_time ? tt.start_time.substring(0, 5) : '09:00'}', '${tt.end_time ? tt.end_time.substring(0, 5) : '09:50'}', ${tt.subject}, ${tt.faculty}, '${tt.subject_category || 'Theory'}')">
                                 <i data-lucide="edit-2" class="w-4 h-4"></i>
                             </button>
                             <button class="text-slate-400 hover:text-red-500 transition-colors" onclick="deleteTimetable(${tt.timetable_id})">
@@ -169,7 +173,7 @@ async function deleteTimetable(id) {
     }
 }
 
-window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac) => {
+window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac, category) => {
     window.editingTimetableId = id;
     
     document.getElementById('ttDept').value = dept || '';
@@ -179,6 +183,7 @@ window.editTimetable = (id, dept, yr, day, period, start, end, subj, fac) => {
     document.getElementById('ttStartTime').value = start || '';
     document.getElementById('ttEndTime').value = end || '';
     document.getElementById('ttSubject').value = subj || '';
+    document.getElementById('ttCategory').value = category || 'Theory';
     document.getElementById('ttFaculty').value = fac || '';
     
     document.querySelector('#addTimetableModalContent h3').innerText = 'Edit Timetable';
