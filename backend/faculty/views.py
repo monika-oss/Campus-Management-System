@@ -102,6 +102,12 @@ class FacultyViewSet(viewsets.ModelViewSet):
                     
         return Response(data)
 
+    @action(detail=False, methods=['get'], permission_classes=[], authentication_classes=[])
+    def debug_leaves(self, request):
+        from leave.models import LeaveRequest
+        leaves = LeaveRequest.objects.all().values('leave_id', 'student_id', 'status', 'from_date', 'to_date', 'is_partial_day', 'from_period', 'to_period')
+        return Response(list(leaves))
+        
     @action(detail=True, methods=['get'])
     def today_classes(self, request, pk=None):
         from django.utils import timezone
