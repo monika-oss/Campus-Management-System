@@ -81,15 +81,16 @@
         
         <!-- Sidebar -->
         <div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[90] hidden lg:hidden"></div>
-        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-[100] shadow-xl fixed inset-y-0 left-0 lg:static h-[100dvh] transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="adminSidebar"><div class="flex-1 overflow-y-auto">
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col justify-between flex-shrink-0 z-[100] shadow-xl fixed inset-y-0 left-0 lg:static h-[100dvh] transform -translate-x-full lg:translate-x-0 transition-transform duration-300" id="adminSidebar">
                 <!-- Brand logo -->
-                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between">
+                <div class="h-20 flex items-center px-4 border-b border-slate-800 gap-2 brand-logo-container justify-between shrink-0">
                     <i data-lucide="school" class="w-8 h-8 text-blue-400 shrink-0"></i>
                     <span class="text-lg font-bold text-white tracking-wider font-outfit brand-text flex-1 whitespace-nowrap">Smart Campus</span>
                     <button id="closeSidebar" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 shrink-0 block lg:hidden focus:outline-none"><i data-lucide="x" class="w-4 h-4 shrink-0"></i></button>
                 </div>
+                <div class="flex-1 overflow-y-auto">
                 <!-- Navigation menu -->
-                <nav class="mt-6 px-3 space-y-1">
+                <nav class="mt-6 px-3 space-y-1 pb-6">
                     <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-white bg-blue-600 shadow-md shadow-blue-600/20 font-medium sidebar-item-link">
                         <i data-lucide="layout-dashboard" class="w-4 h-4 flex-shrink-0"></i><span class="nav-text">Dashboard</span>
                     </a>
@@ -119,7 +120,7 @@
             </div>
             
             <!-- Sidebar Footer / Logout -->
-            <div class="p-4 border-t border-slate-800">
+            <div class="p-4 border-t border-slate-800 shrink-0">
                 <button class="w-full flex items-center justify-center gap-2 bg-slate-850 hover:bg-red-700 hover:text-white text-slate-200 py-2.5 rounded-lg transition-all font-medium border border-slate-700" onclick="auth.logout()">
                     <i data-lucide="log-out" class="w-4 h-4 flex-shrink-0"></i><span class="logout-text">Logout</span>
                 </button>
