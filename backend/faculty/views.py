@@ -48,7 +48,59 @@ class FacultyViewSet(viewsets.ModelViewSet):
             students = students.filter(section=section)
             
         serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+        
+        date_str = request.query_params.get('date')
+        period_str = request.query_params.get('period')
+        
+        if date_str:
+            from leave.models import LeaveRequest, FacultyODAssignment
+            
+            # Find approved leaves for this date
+            leaves = LeaveRequest.objects.filter(
+                status='approved',
+                from_date__lte=date_str,
+                to_date__gte=date_str,
+                student__in=students
+            )
+            
+            # Find ODs for this date
+            ods = FacultyODAssignment.objects.filter(
+                date=date_str,
+                students__in=students
+            )
+            
+            for student_data in data:
+                student_id = student_data['student_id']
+                
+                # Check for OD
+                is_od = False
+                student_ods = ods.filter(students__student_id=student_id)
+                for od in student_ods:
+                    if not period_str or (not od.from_period) or (od.from_period <= int(period_str) <= od.to_period):
+                        is_od = True
+                        break
+                        
+                if is_od:
+                    student_data['auto_status'] = 'on_duty'
+                    continue
+                    
+                # Check for Leave
+                is_leave = False
+                student_leaves = leaves.filter(student_id=student_id)
+                for leave in student_leaves:
+                    if not leave.is_partial_day:
+                        is_leave = True
+                        break
+                    elif period_str and leave.from_period and leave.to_period:
+                        if leave.from_period <= int(period_str) <= leave.to_period:
+                            is_leave = True
+                            break
+                            
+                if is_leave:
+                    student_data['auto_status'] = 'leave'
+                    
+        return Response(data)
 
     @action(detail=True, methods=['get'])
     def today_classes(self, request, pk=None):

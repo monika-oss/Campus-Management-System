@@ -276,7 +276,9 @@
                     let url = `/faculty/${user.faculty_id}/students/?`;
                     if (dept) url += `department=${dept}&`;
                     if (year) url += `year=${year}&`;
-                    if (sec && sec !== 'null' && sec !== 'None') url += `section=${sec}`;
+                    if (sec && sec !== 'null' && sec !== 'None') url += `section=${sec}&`;
+                    if (date) url += `date=${date}&`;
+                    if (period && period !== 'undefined' && period !== 'null') url += `period=${period}`;
                     
                     const students = await api.get(url);
                     
@@ -303,7 +305,7 @@
                             let html = '';
                             studentsToRender.forEach(s => {
                                 const att = existingAttendance.find(a => a.student_details && a.student_details.student_id === s.student_id);
-                                const status = att ? att.status : 'present';
+                                const status = att ? att.status : (s.auto_status || 'present');
 
                                 const pChecked = status === 'present' ? 'checked' : '';
                                 const aChecked = status === 'absent' ? 'checked' : '';
