@@ -12,6 +12,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadFaculty();
     loadTimetable();
 
+    // Subject dropdown listener for adding new subject
+    const ttSubject = document.getElementById('ttSubject');
+    if (ttSubject) {
+        ttSubject.addEventListener('change', (e) => {
+            if (e.target.value === 'add_new') {
+                e.target.value = '';
+                window.openManageSubjectsModal();
+            }
+        });
+    }
+
     // Event listener for form
     const form = document.getElementById('addTimetableForm');
     if (form) {
@@ -83,6 +94,7 @@ async function loadSubjects() {
         subjects.forEach(s => {
             select.innerHTML += `<option value="${s.subject_id}">${s.subject_name}</option>`;
         });
+        select.innerHTML += `<option value="add_new" class="font-semibold text-blue-600 bg-blue-50">+ Add Subject</option>`;
     } catch (e) {
         console.error(e);
     }
