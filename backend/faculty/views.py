@@ -56,21 +56,17 @@ class FacultyViewSet(viewsets.ModelViewSet):
         if date_str:
             from leave.models import LeaveRequest, FacultyODAssignment
             
-            # Find approved leaves for this date
             leaves = LeaveRequest.objects.filter(
-                status='approved',
                 from_date__lte=date_str,
                 to_date__gte=date_str,
                 student__in=students
             )
             
-            # Find ODs for this date
             ods = FacultyODAssignment.objects.filter(date=date_str).prefetch_related('students')
             
             for student_data in data:
                 student_id = student_data['student_id']
                 
-                # Check for OD
                 is_od = False
                 for od in ods:
                     if any(s.student_id == student_id for s in od.students.all()):
@@ -79,7 +75,6 @@ class FacultyViewSet(viewsets.ModelViewSet):
                                 is_od = True
                                 break
                         elif not od.from_period and not od.to_period:
-                            # Full day OD
                             is_od = True
                             break
                             
@@ -87,21 +82,50 @@ class FacultyViewSet(viewsets.ModelViewSet):
                     student_data['auto_status'] = 'on_duty'
                     continue
                     
-                # Check for Leave
-                is_leave = False
                 student_leaves = leaves.filter(student_id=student_id)
-                for leave in student_leaves:
-                    if not leave.is_partial_day:
-                        is_leave = True
-                        break
-                    elif period_str and leave.from_period and leave.to_period:
+                student_data['leave_status'] = None
+                student_data['leave_pending'] = False
+
+                # ── PASS 1: Period-wise leave (highest priority after OD) ──────────
+                # Check if this specific period has an approved/pending period-wise leave.
+                # This must run BEFORE the full-day check so that a student who has
+                # a pending full-day leave + an approved period-wise leave correctly
+                # shows L (not A) for the approved periods.
+                period_leave_found = False
+                if period_str:
+                    for leave in student_leaves:
+                        if not leave.is_partial_day:
+                            continue  # skip full-day leaves in this pass
+                        if not (leave.from_period and leave.to_period):
+                            continue
                         if leave.from_period <= int(period_str) <= leave.to_period:
-                            is_leave = True
+                            period_leave_found = True
+                            if leave.status == 'approved':
+                                # Period-wise approved → L (Leave) pre-selected
+                                student_data['auto_status'] = 'leave'
+                                student_data['leave_status'] = 'approved'
+                            elif leave.status in ('pending_advisor', 'pending_hod'):
+                                # Period-wise pending → A default + badge
+                                student_data['leave_pending'] = True
+                                student_data['leave_status'] = leave.status
+                            break  # one period-wise leave per student per period
+
+                # ── PASS 2: Full-day leave (only if no period-wise leave found) ────
+                # Full day leave → A in attendance regardless of approval.
+                # Approval is administrative; faculty manually marks attendance.
+                if not period_leave_found:
+                    for leave in student_leaves:
+                        if leave.is_partial_day:
+                            continue  # skip period-wise leaves in this pass
+                        if leave.status == 'approved':
+                            student_data['leave_status'] = 'approved'
+                            # intentionally NO auto_status = 'leave' for full-day
+                            break
+                        elif leave.status in ('pending_advisor', 'pending_hod'):
+                            student_data['leave_pending'] = True
+                            student_data['leave_status'] = leave.status
                             break
                             
-                if is_leave:
-                    student_data['auto_status'] = 'leave'
-                    
         return Response(data)
 
     @action(detail=False, methods=['get'], permission_classes=[], authentication_classes=[])
