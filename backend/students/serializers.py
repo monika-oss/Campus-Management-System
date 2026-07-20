@@ -27,6 +27,7 @@ class SubjectSerializer(serializers.ModelSerializer):
 
 class TimetableSerializer(serializers.ModelSerializer):
     subject_details = SubjectSerializer(source='subject', read_only=True)
+    timetable_department_details = DepartmentSerializer(source='department', read_only=True)
     # Cannot easily nest FacultySerializer without circular import, so just provide IDs or simple dict
     faculty_name = serializers.CharField(source='faculty.name', read_only=True)
     

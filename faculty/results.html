@@ -240,7 +240,7 @@
                         const seen = new Set();
                         classes.forEach(c => {
                             const name = c.subject_details ? c.subject_details.subject_name : 'Subject ' + c.subject;
-                            const deptCode = c.subject_details && c.subject_details.department_details ? c.subject_details.department_details.code : 'Dept';
+                            const deptCode = c.timetable_department_details ? c.timetable_department_details.code : (c.subject_details && c.subject_details.department_details ? c.subject_details.department_details.code : 'Dept');
                             
                             // Unique key for option uniqueness (Subject + Department + Year + Section)
                             const key = `${c.subject}-${c.department}-${c.year}-${c.section}`;

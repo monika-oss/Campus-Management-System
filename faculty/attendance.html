@@ -251,8 +251,13 @@
                         select.innerHTML = '<option value="">No classes today</option>';
                     } else {
                         classes.forEach(c => {
-                            const name = c.subject_details ? c.subject_details.subject_name : 'Sub '+c.subject;
-                            select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section}" data-period="${c.period_number}">Period ${c.period_number} - ${name} (${c.year} Yr, Sec ${c.section})</option>`;
+                            const name = c.subject_details ? c.subject_details.subject_name : 'Subject ' + c.subject;
+                            const deptCode = c.timetable_department_details ? c.timetable_department_details.code : (c.subject_details && c.subject_details.department_details ? c.subject_details.department_details.code : 'Dept');
+                            const periodText = c.period_number ? `Period ${c.period_number} - ` : '';
+                            
+                            select.innerHTML += `<option value="${c.subject}" data-dept="${c.department}" data-year="${c.year}" data-sec="${c.section || ''}" data-period="${c.period_number || ''}">
+                                ${periodText}${name} (${deptCode}, Year ${c.year}${c.section ? ', Sec ' + c.section : ''})
+                            </option>`;
                         });
                     }
                 }
