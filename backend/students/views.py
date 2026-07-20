@@ -39,7 +39,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         attendances = student.attendance_set.all()
         
         total_classes = attendances.count()
-        total_present = attendances.filter(status='present').count()
+        total_present = attendances.filter(status__in=['present', 'on_duty', 'late']).count()
         total_absent = attendances.filter(status='absent').count()
         total_leave = attendances.filter(status='leave').count()
         overall_percentage = (total_present / total_classes * 100) if total_classes > 0 else 0
@@ -50,7 +50,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         for att in attendances:
             subj_name = att.subject.subject_name
             subject_data[subj_name]['total'] += 1
-            if att.status == 'present':
+            if att.status in ['present', 'on_duty', 'late']:
                 subject_data[subj_name]['present'] += 1
                 
         subjects_list = []
