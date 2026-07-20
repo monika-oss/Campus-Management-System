@@ -333,7 +333,7 @@
                                 } else if (s.leave_status === 'approved' && s.auto_status === 'leave') {
                                     // Period-wise approved leave — L is pre-selected
                                     leaveBadge = `<span style="font-size:11px;background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><span>✓</span> Period Leave Approved</span>`;
-                                } else if (s.leave_pending || s.leave_status === 'pending_advisor') {
+                                } else if (s.leave_status === 'pending_advisor') {
                                     leaveBadge = `<span style="font-size:11px;background:#fef3c7;color:#b45309;border:1px solid #fde68a;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><span>⏳</span> Leave Pending (Advisor)</span>`;
                                 } else if (s.leave_status === 'pending_hod') {
                                     leaveBadge = `<span style="font-size:11px;background:#fef3c7;color:#b45309;border:1px solid #fde68a;padding:2px 8px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:4px;"><span>⏳</span> Leave Pending (HOD)</span>`;
