@@ -70,11 +70,21 @@ class FacultyViewSet(viewsets.ModelViewSet):
                 is_od = False
                 for od in ods:
                     if any(s.student_id == student_id for s in od.students.all()):
-                        if od.from_period and od.to_period and period_str:
-                            if od.from_period <= int(period_str) <= od.to_period:
+                        # Default bounds if one is missing but the other exists
+                        fp = od.from_period
+                        tp = od.to_period
+                        
+                        if fp and not tp:
+                            tp = fp
+                        elif tp and not fp:
+                            fp = tp
+                            
+                        if fp and tp and period_str:
+                            if fp <= int(period_str) <= tp:
                                 is_od = True
                                 break
-                        elif not od.from_period and not od.to_period:
+                        elif not fp and not tp:
+                            # Full day OD
                             is_od = True
                             break
                             

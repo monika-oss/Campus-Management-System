@@ -397,8 +397,13 @@
                 const fromP = document.getElementById('odFrom').value;
                 const toP = document.getElementById('odTo').value;
                 
-                if (fromP) payload.from_period = parseInt(fromP);
-                if (toP) payload.to_period = parseInt(toP);
+                if (fromP) {
+                    payload.from_period = parseInt(fromP);
+                    payload.to_period = toP ? parseInt(toP) : parseInt(fromP);
+                } else if (toP) {
+                    payload.from_period = parseInt(toP);
+                    payload.to_period = parseInt(toP);
+                }
 
                 // Note: Make sure the URL matches the FacultyODAssignmentViewSet router
                 // Usually it's /api/leave/ods/ or /api/ods/
