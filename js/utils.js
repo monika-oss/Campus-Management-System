@@ -313,10 +313,20 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdown.style.top = '100%';
         parent.appendChild(dropdown);
         
-        const user = auth.getUser() || {};
-        const roleName = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
+        let user = auth.getUser() || {};
+        
+        // Automatically fetch latest profile data in background to keep it fresh
+        if (typeof api !== 'undefined' && user.id) {
+            api.get('/auth/profile/').then(data => {
+                if (data) {
+                    localStorage.setItem('user_data', JSON.stringify(data));
+                    user = data;
+                }
+            }).catch(e => console.log('Silently failed to refresh profile'));
+        }
 
         window.renderProfileDropdown = function(view = 'details', event = null) {
+            const roleName = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User';
             if (event) {
                 event.stopPropagation();
                 event.preventDefault();
