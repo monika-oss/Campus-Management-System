@@ -319,14 +319,14 @@
                             studentsToRender.forEach((s, index) => {
                                 let studentId = s.student_id || s.id;
                                 let existing = resultMap[studentId];
-                                if (!existing || (existing && !existing.is_published)) {
+                                if (!existing) {
                                     hasUngradedStudents = true;
                                 }
                                 
                                 const markVal = existing ? existing.marks_obtained : '';
                                 const maxVal = existing ? existing.max_marks : '100';
                                 const resultId = existing ? existing.result_id : '';
-                                const isDisabled = existing && existing.is_published;
+                                const isDisabled = existing ? true : false;
 
                                 const marksInputClass = isDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-700';
                                 const maxInputClass = isDisabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-50 text-slate-600';
