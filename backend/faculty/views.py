@@ -109,6 +109,9 @@ class FacultyViewSet(viewsets.ModelViewSet):
                         if not (leave.from_period and leave.to_period):
                             continue
                         if leave.from_period <= int(period_str) <= leave.to_period:
+                            if leave.status == 'rejected':
+                                continue # Ignore rejected leaves, keep looking
+                                
                             period_leave_found = True
                             if leave.status == 'approved':
                                 # Period-wise approved → L (Leave) pre-selected
@@ -118,7 +121,7 @@ class FacultyViewSet(viewsets.ModelViewSet):
                                 # Period-wise pending → A default + badge
                                 student_data['leave_pending'] = True
                                 student_data['leave_status'] = leave.status
-                            break  # one period-wise leave per student per period
+                            break  # one active period-wise leave per student per period
 
                 # ── PASS 2: Full-day leave (only if no period-wise leave found) ────
                 # Full day leave → A in attendance regardless of approval.
