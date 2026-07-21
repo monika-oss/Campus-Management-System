@@ -5,17 +5,23 @@ from django.contrib.auth import authenticate
 class UserSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(source='date_joined', read_only=True)
     student_id = serializers.SerializerMethodField()
+    roll_number = serializers.SerializerMethodField()
     faculty_id = serializers.SerializerMethodField()
     designation = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'name', 'role', 'is_active', 'created_at', 'student_id', 'faculty_id', 'designation')
+        fields = ('id', 'email', 'name', 'role', 'is_active', 'created_at', 'student_id', 'roll_number', 'faculty_id', 'designation')
         read_only_fields = ('id', 'created_at')
 
     def get_student_id(self, obj):
         if hasattr(obj, 'student_profile') and obj.student_profile:
             return obj.student_profile.student_id
+        return None
+
+    def get_roll_number(self, obj):
+        if hasattr(obj, 'student_profile') and obj.student_profile:
+            return obj.student_profile.roll_number
         return None
 
     def get_faculty_id(self, obj):
