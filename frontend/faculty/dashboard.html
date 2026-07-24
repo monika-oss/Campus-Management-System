@@ -223,8 +223,9 @@
 
             // Pending leaves
             try {
-                const leaves = await api.get('/leave/requests/?status=pending');
-                document.getElementById('kpi-leaves').textContent = leaves.length;
+                const leaves = await api.get('/leave/');
+                const pendingCount = leaves.filter(l => l.status === 'pending_advisor' || l.status === 'pending_hod').length;
+                document.getElementById('kpi-leaves').textContent = pendingCount;
             } catch(e) {
                 document.getElementById('kpi-leaves').textContent = '0';
             }
